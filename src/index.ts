@@ -5,10 +5,10 @@ import {
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ICommandPalette } from '@jupyterlab/apputils';
 /**
- * Initialization data for the myextension extension.
+ * Initialization data for the juptyerlab-stateless-run extension.
  */
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'myextension:plugin',
+  id: 'juptyerlab-stateless-run:plugin',
   description: 'A JupyterLab extension.',
   autoStart: true,
   requires: [ICommandPalette, INotebookTracker],
@@ -20,7 +20,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     const { commands, shell } = app;
     const command = 'paul:clear-run-to-selected';
 
-    console.log('JupyterLab extension myextension is activated!');
+    console.log('JupyterLab extension juptyerlab-stateless-run is activated!');
     // Add a command
     commands.addCommand(command, {
       label: 'Clear All Outputs, Restart Kernel, and Run to Selected',
