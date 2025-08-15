@@ -19,6 +19,7 @@
     "files": [
         "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
         "style/**/*.{css,js,eot,gif,html,jpg,json,png,svg,woff2,ttf}",
+        "schema/*.json",
         "src/**/*.{ts,tsx}"
     ],
     "main": "lib/index.js",
@@ -56,6 +57,7 @@
     },
     "dependencies": {
         "@jupyterlab/application": "^4.0.0",
+        "@jupyterlab/mainmenu": "^4.0.0",
         "@jupyterlab/notebook": "^4.0.0"
     },
     "devDependencies": {
@@ -95,7 +97,8 @@
     },
     "jupyterlab": {
         "extension": true,
-        "outputDir": "jupyterlab_stateless_run/labextension"
+        "outputDir": "jupyterlab_stateless_run/labextension",
+        "schemaDir": "schema"
     },
     "eslintIgnore": [
         "node_modules",

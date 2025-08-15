@@ -1,0 +1,19 @@
+{
+  "title": "Stateless Notebook Execution",
+  "description": "Stateless notebook execution settings.",
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-run",
+        "items": [
+          {
+            "command": "stateless:clear-restart-run-to-selected",
+            "rank": 80
+          }
+        ]
+      }
+    ]
+  },
+  "additionalProperties": false,
+  "type": "object"
+}
