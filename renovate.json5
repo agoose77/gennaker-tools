@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
+    // Always merge minor updates
     ":automergeMinor"
   ],
   "commitMessagePrefix": "deps:",
@@ -26,6 +27,7 @@
       "schedule": [
         "* * 15 * *"
       ],
+      // Always merge CI updates
       "automerge": true,
       "matchCategories": [
         "ci"
@@ -38,6 +40,7 @@
       ],
       "groupName": "js",
       "minimumReleaseAge": "10 days",
+      // Either extend range, or bump locked version
       "rangeStrategy": "update-lockfile"
     },
     {
@@ -46,6 +49,7 @@
       ],
       "groupName": "py",
       "minimumReleaseAge": "10 days",
+      // Only widen range (as we're more a library than an app)
       "rangeStrategy": "widen"
     }
   ]
