@@ -5,7 +5,7 @@
   ],  
   "packageRules": [
     {
-      # All updates must be 10 days old
+      // All updates must be 10 days old
       "minimumReleaseAge": "10 days"
     }
   ]
