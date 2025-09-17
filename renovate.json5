@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],  
+  "packageRules": [
+    {
+      # All updates must be 10 days old
+      "minimumReleaseAge": "10 days"
+    }
+  ]
+}
