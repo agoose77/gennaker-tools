@@ -46,7 +46,7 @@
       ],
       "groupName": "py",
       "minimumReleaseAge": "10 days",
-      "rangeStrategy": "bump"
+      "rangeStrategy": "widen"
     }
   ]
 }
