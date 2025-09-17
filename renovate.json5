@@ -1,0 +1,57 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    // Always merge minor updates
+    ":automergeMinor"
+  ],
+  "commitMessagePrefix": "deps:",
+  "labels": [
+    "dependencies",
+    "maintenance"
+  ],
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "description": "Do not bump requires-python.",
+      "matchManagers": [
+        "pep621"
+      ],
+      "matchPackageNames": [
+        "python"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Schedule automerged GHA updates for the 15th of each month.",
+      "groupName": "gha",
+      "schedule": [
+        "* * 15 * *"
+      ],
+      // Always merge CI updates
+      "automerge": true,
+      "matchCategories": [
+        "ci"
+      ],
+      "minimumReleaseAge": "10 days"
+    },
+    {
+      "matchCategories": [
+        "js"
+      ],
+      "groupName": "js",
+      "minimumReleaseAge": "10 days",
+      // Either extend range, or bump locked version
+      "rangeStrategy": "update-lockfile"
+    },
+    {
+      "matchCategories": [
+        "python"
+      ],
+      "groupName": "py",
+      "minimumReleaseAge": "10 days",
+      // Only widen range (as we're more a library than an app)
+      "rangeStrategy": "widen"
+    }
+  ]
+}
