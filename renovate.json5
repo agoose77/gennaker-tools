@@ -1,11 +1,43 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    // auto-merge minor updates
+    ":automergeMinor"
   ],  
+  "commitMessagePrefix": "deps:",
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
   "packageRules": [
     {
-      "matchCategories": ["ci", "js", "python"],
+    "description": "Do not bump requires-python.",
+    "matchManagers": ["pep621"],
+    "matchPackageNames": ["python"],
+    "enabled": false
+  },
+   {
+    "description": "Schedule automerged GHA updates for the 15th of each month.",
+    "matchManagers": ["github-actions"],
+    "groupName": "gha",
+    "schedule": ["* * 15 * *"],
+    "automerge": true
+  }
+    {
+      "matchCategories": ["js"],
+      // All updates must be 10 days old
+      "minimumReleaseAge": "10 days",
+      // For in-range updates, just modify lockfile
+      "rangeStrategy": "in-range-only"
+    },
+    {
+      "matchCategories": ["python"],
+      // All updates must be 10 days old
+      "minimumReleaseAge": "10 days",
+      // We're not using a lockfile, so we just bump the lower bound
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchCategories": ["ci"],
       // All updates must be 10 days old
       "minimumReleaseAge": "10 days"
     }
