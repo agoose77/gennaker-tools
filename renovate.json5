@@ -5,6 +5,7 @@
   ],  
   "packageRules": [
     {
+      "matchCategories": ["ci", "js", "python"],
       // All updates must be 10 days old
       "minimumReleaseAge": "10 days"
     }
