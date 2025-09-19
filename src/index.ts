@@ -5,6 +5,7 @@ import {
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ICommandPalette } from '@jupyterlab/apputils';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
+
 /**
  * Initialization data for the jupyterlab-stateless-run extension.
  */
@@ -45,21 +46,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
         console.log(`${command} has been called from... ${orig}.`);
         if (orig !== 'init') {
           // Clear all outputs
-          await commands
-            .execute('notebook:clear-all-cell-outputs', { origin: 'init' })
-            .catch(reason => {
-              console.error(
-                `An error occurred during the execution of ${command}.\n${reason}`
-              );
-            });
-          // Clear all outputs
-          await commands
-            .execute('notebook:restart-and-run-to-selected', { origin: 'init' })
-            .catch(reason => {
-              console.error(
-                `An error occurred during the execution of ${command}.\n${reason}`
-              );
-            });
+
+          await commands.execute('apputils:run-all-enabled', {
+            commands: [
+              'notebook:clear-all-cell-outputs',
+              'notebook:restart-and-run-to-selected'
+            ]
+          });
         }
       }
     });
