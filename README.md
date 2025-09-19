@@ -1,4 +1,4 @@
-# jupyterlab-stateless-run
+# gennaker-tools
 
 [![Github Actions Status](/workflows/Build/badge.svg)](/actions/workflows/build.yml)
 
@@ -13,7 +13,7 @@ A JupyterLab extension to provide a `restart-and-run-to-selected` command varian
 To install the extension, execute:
 
 ```bash
-pip install jupyterlab-stateless-run
+pip install gennaker-tools
 ```
 
 ## Uninstall
@@ -21,7 +21,7 @@ pip install jupyterlab-stateless-run
 To remove the extension, execute:
 
 ```bash
-pip uninstall jupyterlab-stateless-run
+pip uninstall gennaker-tools
 ```
 
 ## Contributing
@@ -36,7 +36,7 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the jupyterlab_stateless_run directory
+# Change directory to the gennaker_tools directory
 # Install package in development mode
 pip install -e "."
 # Link your development version of the extension with JupyterLab
@@ -65,12 +65,12 @@ jupyter lab build --minimize=False
 ### Development uninstall
 
 ```bash
-pip uninstall jupyterlab-stateless-run
+pip uninstall gennaker-tools
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `jupyterlab-stateless-run` within that folder.
+folder is located. Then you can remove the symlink named `gennaker-tools` within that folder.
 
 ### Packaging the extension
 

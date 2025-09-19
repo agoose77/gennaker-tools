@@ -1,5 +1,5 @@
 {
-    "name": "jupyterlab-stateless-run",
+    "name": "gennaker-tools",
     "version": "0.1.0",
     "description": "A JupyterLab extension to provide a restart-and-run-to-selected command variant that clears non-executed cell outputs.",
     "keywords": [
@@ -39,7 +39,7 @@
         "clean": "jlpm clean:lib",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
-        "clean:labextension": "rimraf jupyterlab_stateless_run/labextension jupyterlab_stateless_run/_version.py",
+        "clean:labextension": "rimraf gennaker_tools/labextension gennaker_tools/_version.py",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
         "eslint": "jlpm eslint:check --fix",
         "eslint:check": "eslint . --cache --ext .ts,.tsx",
@@ -97,7 +97,7 @@
     },
     "jupyterlab": {
         "extension": true,
-        "outputDir": "jupyterlab_stateless_run/labextension",
+        "outputDir": "gennaker_tools/labextension",
         "schemaDir": "schema"
     },
     "eslintIgnore": [

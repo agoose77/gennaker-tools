@@ -7,10 +7,10 @@ import { ICommandPalette } from '@jupyterlab/apputils';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 
 /**
- * Initialization data for the jupyterlab-stateless-run extension.
+ * Initialization data for the gennaker-tools extension.
  */
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab-stateless-run:plugin',
+  id: 'gennaker-tools:plugin',
   description: 'A JupyterLab extension.',
   autoStart: true,
   requires: [ICommandPalette, INotebookTracker],
@@ -25,7 +25,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     const { commands, shell } = app;
     const command = 'stateless:clear-restart-run-to-selected';
 
-    console.log('JupyterLab extension jupyterlab-stateless-run is activated!');
+    console.log('JupyterLab extension gennaker-tools is activated!');
     // Add a command
 
     const isEnabled = () => {
