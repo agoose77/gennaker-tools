@@ -1,7 +1,7 @@
 {
   "ServerApp": {
     "jpserver_extensions": {
-      "toml-sync": true
+      "gennaker_tools": true
     }
   }
 }
