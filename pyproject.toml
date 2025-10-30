@@ -24,7 +24,9 @@ classifiers = [
 ]
 dependencies = [
     "tomli",
-    "tomli_w"
+    "tomli_w",
+    "watchfiles",
+    "aiofiles"
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 
