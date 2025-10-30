@@ -1,0 +1,7 @@
+{
+  "ServerApp": {
+    "jpserver_extensions": {
+      "gennaker_tools": true
+    }
+  }
+}

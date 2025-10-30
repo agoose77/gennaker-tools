@@ -23,6 +23,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
+    "tomli",
+    "tomli_w",
+    "watchfiles",
+    "aiofiles"
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 
@@ -38,6 +42,7 @@ exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "gennaker_tools/labextension" = "share/jupyter/labextensions/gennaker-tools"
+"jupyter-config/jupyter_server_config.d" = "etc/jupyter/jupyter_server_config.d"
 "install.json" = "share/jupyter/labextensions/gennaker-tools/install.json"
 
 [tool.hatch.build.targets.wheel]
