@@ -2,7 +2,7 @@
 
 [![Github Actions Status](/workflows/Build/badge.svg)](/actions/workflows/build.yml)
 
-A JupyterLab extension to provide a `restart-and-run-to-selected` command variant that clears non-executed cell outputs.
+A series of JupyterLab and Jupyter Server extensions to power the gennaker project.
 
 ## Requirements
 
