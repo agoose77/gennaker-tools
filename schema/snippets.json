@@ -1,0 +1,52 @@
+{
+  "title": "Gennaker Settings",
+  "description": "Gennaker tools settings.",
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-run",
+        "items": [
+          {
+            "command": "stateless:clear-restart-run-to-selected",
+            "rank": 80
+          }
+        ]
+      }
+    ]
+  },
+  "properties": {
+    "snippets": {
+      "type": "array",
+      "title": "Codemirror snippets",
+      "description": "Snippets of the form accepted by Codemirrors snippetCompletion",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "class",
+              "constant",
+              "enum",
+              "function",
+              "interface",
+              "keyword",
+              "method",
+              "namespace",
+              "property",
+              "text",
+              "type",
+              "variable"
+            ]
+          },
+
+          "body": { "type": "string" },
+          "label": { "type": "string" }
+        },
+        "required": ["type", "body", "label"]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}
