@@ -42,8 +42,8 @@ exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "gennaker_tools/labextension" = "share/jupyter/labextensions/gennaker-tools"
-"jupyter-config/jupyter_server_config.d" = "etc/jupyter/jupyter_server_config.d"
 "install.json" = "share/jupyter/labextensions/gennaker-tools/install.json"
+"jupyter-config/jupyter_server_config.d" = "etc/jupyter/jupyter_server_config.d"
 
 [tool.hatch.build.targets.wheel]
 packages = ["gennaker_tools"]

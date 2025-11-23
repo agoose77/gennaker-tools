@@ -1,6 +1,6 @@
 {
-  "title": "Stateless Notebook Execution",
-  "description": "Stateless notebook execution settings.",
+  "title": "Gennaker Settings",
+  "description": "Gennaker tools settings.",
   "jupyter.lab.menus": {
     "main": [
       {
@@ -13,7 +13,5 @@
         ]
       }
     ]
-  },
-  "additionalProperties": false,
-  "type": "object"
+  }
 }

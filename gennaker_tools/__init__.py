@@ -12,10 +12,6 @@ except ImportError:
 from .settings_sync_extension import SettingsSyncApp
 
 
-def _jupyter_labextension_paths():
-    return [{"src": "labextension", "dest": "gennaker-tools"}]
-
-
 def _jupyter_server_extension_points():
     """
     Returns a list of dictionaries with metadata describing
@@ -24,3 +20,7 @@ def _jupyter_server_extension_points():
     return [
         {"module": "gennaker_tools.settings_sync_extension", "app": SettingsSyncApp}
     ]
+
+
+def _jupyter_labextension_paths():
+    return [{"src": "labextension", "dest": "gennaker-tools"}]
