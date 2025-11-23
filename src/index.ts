@@ -171,8 +171,6 @@ export const snippetsPlugin: JupyterFrontEndPlugin<void> = {
   requires: [IEditorExtensionRegistry],
   optional: [],
   activate: (app: JupyterFrontEnd, registry: IEditorExtensionRegistry) => {
-    console.log('REGISTER SNIPPETS');
-
     registry.addExtension(
       Object.freeze({
         name: 'gennaker-tools:snippets',
