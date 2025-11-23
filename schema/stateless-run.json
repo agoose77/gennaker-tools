@@ -1,0 +1,17 @@
+{
+  "title": "Gennaker Settings",
+  "description": "Gennaker tools settings.",
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-run",
+        "items": [
+          {
+            "command": "stateless:clear-restart-run-to-selected",
+            "rank": 80
+          }
+        ]
+      }
+    ]
+  }
+}

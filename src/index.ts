@@ -5,7 +5,6 @@ import {
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ICommandPalette } from '@jupyterlab/apputils';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
-import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import {
   IEditorExtensionRegistry,
   EditorExtensionRegistry
@@ -120,60 +119,82 @@ export const reloadPlugin: JupyterFrontEndPlugin<void> = {
   }
 };
 
+type SnippetConfigurationItem = Completion & { body: string };
+type SnippetConfiguration = {
+  snippets: SnippetConfigurationItem[];
+};
+
+const SNIPPET_EXTENSION_SCHEMA = {
+  properties: {
+    snippets: {
+      type: 'array',
+      title: 'Codemirror snippets',
+      description:
+        'Snippets of the form accepted by Codemirrors snippetCompletion',
+      items: {
+        type: 'object',
+        properties: {
+          type: {
+            type: 'string',
+            enum: [
+              'class',
+              'constant',
+              'enum',
+              'function',
+              'interface',
+              'keyword',
+              'method',
+              'namespace',
+              'property',
+              'text',
+              'type',
+              'variable'
+            ]
+          },
+
+          body: { type: 'string' },
+          label: { type: 'string' }
+        },
+        required: ['type', 'body', 'label']
+      }
+    }
+  },
+  additionalProperties: false,
+  type: 'object'
+};
+
 const SNIPPETS_PLUGIN_ID = 'gennaker-tools:snippets';
 export const snippetsPlugin: JupyterFrontEndPlugin<void> = {
   id: SNIPPETS_PLUGIN_ID,
   description: 'A JupyterLab extension.',
   autoStart: true,
-  requires: [IEditorExtensionRegistry, ISettingRegistry],
+  requires: [IEditorExtensionRegistry],
   optional: [],
-  activate: (
-    app: JupyterFrontEnd,
-    registry: IEditorExtensionRegistry,
-    settings: ISettingRegistry
-  ) => {
+  activate: (app: JupyterFrontEnd, registry: IEditorExtensionRegistry) => {
     console.log('REGISTER SNIPPETS');
 
-    function loadSetting(setting: ISettingRegistry.ISettings): void {
-      const snippets = (
-        setting.get('snippets').composite as any[] as (Completion & {
-          body: string;
-        })[]
-      ).map(snippet => {
-        const { body, ...rest } = snippet;
-        return snippetCompletion(body, rest);
-      });
-      const extension = () => {
-        return autocompletion({
-          override: [completeFromList(snippets)]
-        });
-      };
-      registry.addExtension(
-        Object.freeze({
-          name: 'gennaker-tools:snippets',
-          factory: () =>
-            EditorExtensionRegistry.createConfigurableExtension(() =>
-              extension()
-            ),
-          schema: {}
-        })
-      );
-    }
-    // Wait for the application to be restored and
-    // for the settings for this plugin to be loaded
-    Promise.all([app.restored, settings.load(SNIPPETS_PLUGIN_ID)])
-      .then(([, setting]) => {
-        // Read the settings
-        loadSetting(setting);
-
-        // Listen for your plugin setting changes using Signal
-        setting.changed.connect(loadSetting);
+    registry.addExtension(
+      Object.freeze({
+        name: 'gennaker-tools:snippets',
+        factory: () =>
+          EditorExtensionRegistry.createConfigurableExtension(
+            (config: SnippetConfiguration) => {
+              return autocompletion({
+                override: [
+                  completeFromList(
+                    config.snippets.map(snippet => {
+                      const { body, ...rest } = snippet;
+                      return snippetCompletion(body, rest);
+                    })
+                  )
+                ]
+              });
+            }
+          ),
+        default: { snippets: [] },
+        schema: SNIPPET_EXTENSION_SCHEMA
       })
-      .catch(reason => {
-        console.error(
-          `Something went wrong when reading the settings.\n${reason}`
-        );
-      });
+    );
   }
 };
 
