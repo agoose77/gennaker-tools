@@ -5,17 +5,21 @@
 A series of JupyterLab and Jupyter Server extensions to power the gennaker project.
 
 ## Features
+
 ### TOML ←→ JSON Settings Sync
+
 <img width="1130" height="900" alt="image" src="https://github.com/user-attachments/assets/c9babdd6-d247-45a1-a590-f17165f5b7fb" />
 
 _Synchronise between JSON and TOML representations of settings under the JupyterLab settings path._
 
 ## Code Snippets
+
 <img width="1350" height="870" alt="image" src="https://github.com/user-attachments/assets/4e2673a9-3e27-4535-a3b0-b86e27f12f49" />
 
 _Use CodeMirror snippets to autocomplete text and modular units of content._ See https://codemirror.net/docs/ref/#autocomplete.autocompletion for more information.
 
 ## Reset Command
+
 ```
 gennaker-tools:reset-jupyterlab
 ```
