@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: extension-artifacts
-          path: dist/gennaker-tools*
+          path: dist/gennaker_tools*
           if-no-files-found: error
 
   test_isolated:
@@ -62,7 +62,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.12'
           architecture: 'x64'
       - uses: actions/download-artifact@v4
         with:
