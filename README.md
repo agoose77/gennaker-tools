@@ -1,6 +1,6 @@
 # gennaker-tools
 
-[![Github Actions Status](/workflows/Build/badge.svg)](/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/agoose77/gennaker-tools/workflows/Build/badge.svg)](https://github.com/agoose77/gennaker-tools/actions/workflows/build.yml)
 
 A series of JupyterLab and Jupyter Server extensions to power the gennaker project.
 
