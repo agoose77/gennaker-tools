@@ -9,7 +9,7 @@
     ],
     "homepage": "",
     "bugs": {
-        "url": "/issues"
+        "url": "https://github.com/agoose77/gennaker-tools/issues"
     },
     "license": "BSD-3-Clause",
     "author": {
@@ -27,7 +27,7 @@
     "style": "style/index.css",
     "repository": {
         "type": "git",
-        "url": ".git"
+        "url": "https://github.com/agoose77/gennaker-tools.git"
     },
     "scripts": {
         "build": "jlpm build:lib && jlpm build:labextension:dev",
