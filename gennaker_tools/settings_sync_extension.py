@@ -5,6 +5,7 @@ from traitlets import Instance, default, validate, TraitError
 import pathlib
 import watchfiles
 import jupyter_server.serverapp
+import asyncio
 import tomli
 import json
 import tomli_w
@@ -17,6 +18,9 @@ class SettingsSyncApp(ExtensionApp):
     name = "settings-sync"
     load_other_extensions = True
     settings_path = Instance(pathlib.Path)
+
+    _task = Instance(asyncio.Task, allow_none=True)
+    _event = Instance(asyncio.Event, allow_none=True)
 
     @default("settings_path")
     def _default_settings_path(self):
@@ -76,7 +80,9 @@ class SettingsSyncApp(ExtensionApp):
             other_path.unlink()
 
     async def _event_loop(self):
-        async for changes in watchfiles.awatch(self.settings_path):
+        async for changes in watchfiles.awatch(
+            self.settings_path, stop_event=self._event
+        ):
             for change, _path in changes:
                 path = pathlib.Path(_path)
 
@@ -105,8 +111,16 @@ class SettingsSyncApp(ExtensionApp):
                         await self._sync_watched_files(path, other_path)
 
     async def _start_jupyter_server_extension(self, app):
-        await self._event_loop()
+        self._event = asyncio.Event()
+        self._task = asyncio.create_task(self._event_loop())
 
     async def stop_extension(self):
-        # TODO: might need to store task and cancel it here
-        ...
+        if self._event is not None:
+            self._event.set()
+            try:
+                await self._task
+            except asyncio.CancelledError:
+                pass
+            finally:
+                self._event = None
+                self._task = None
