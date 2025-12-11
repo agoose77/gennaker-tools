@@ -84,31 +84,37 @@ class SettingsSyncApp(ExtensionApp):
             self.settings_path, stop_event=self._event
         ):
             for change, _path in changes:
-                path = pathlib.Path(_path)
+                try:
+                    await self._reconcile_change(change, pathlib.Path(_path))
+                except Exception as exc:
+                    self.log.error(exc)
 
-                path_is_toml = self._is_toml_path(path)
-                if not (path_is_toml or self._is_settings_path(path)):
-                    continue
+    async def _reconcile_change(self, change, path):
+        # Ignore .~ files
+        if path.name.startswith(".~"):
+            return
 
-                # Find other path
-                other_path = (
-                    self._toml_to_settings_path(path)
-                    if path_is_toml
-                    else self._settings_to_toml_path(path)
-                )
+        # Only process settings files
+        path_is_toml = self._is_toml_path(path)
+        if not (path_is_toml or self._is_settings_path(path)):
+            return
 
-                # Now we have either TOML or JSON setting files
-                # File needs deleting
-                if change == watchfiles.Change.deleted:
-                    await self._unsync_watched_files(path, other_path)
+        # Find other path
+        other_path = (
+            self._toml_to_settings_path(path)
+            if path_is_toml
+            else self._settings_to_toml_path(path)
+        )
 
-                # Files might need syncing
-                elif (
-                    change == watchfiles.Change.added
-                    or change == watchfiles.Change.modified
-                ):
-                    if await self._watched_files_need_sync(path, other_path):
-                        await self._sync_watched_files(path, other_path)
+        # Now we have either TOML or JSON setting files
+        # File needs deleting
+        if change == watchfiles.Change.deleted:
+            await self._unsync_watched_files(path, other_path)
+
+        # Files might need syncing
+        elif change == watchfiles.Change.added or change == watchfiles.Change.modified:
+            if await self._watched_files_need_sync(path, other_path):
+                await self._sync_watched_files(path, other_path)
 
     async def _start_jupyter_server_extension(self, app):
         self._event = asyncio.Event()
