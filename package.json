@@ -1,6 +1,6 @@
 {
     "name": "gennaker-tools",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "A JupyterLab extension to provide a restart-and-run-to-selected command variant that clears non-executed cell outputs.",
     "keywords": [
         "jupyter",
