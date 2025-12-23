@@ -21,7 +21,7 @@
       inherit (pkgs) lib;
 
       python = pkgs.python313;
-      node = pkgs.nodejs_22;
+      node = pkgs.nodejs_24;
       packages =
         [
           python
