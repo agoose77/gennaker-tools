@@ -7,7 +7,7 @@
         "jupyterlab",
         "jupyterlab-extension"
     ],
-    "homepage": "",
+    "homepage": "https://github.com/agoose77/gennaker-tools",
     "bugs": {
         "url": "https://github.com/agoose77/gennaker-tools/issues"
     },
