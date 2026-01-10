@@ -7,7 +7,7 @@
         "id": "jp-mainmenu-run",
         "items": [
           {
-            "command": "stateless:clear-restart-run-to-selected",
+            "command": "gennaker-tools:restart-run-stateless",
             "rank": 80
           }
         ]
