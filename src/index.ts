@@ -41,7 +41,6 @@ export const statelessRunPlugin: JupyterFrontEndPlugin<void> = {
     // Add a command
 
     const isEnabled = () => {
-      console.log('enabed', { tracker, shell });
       return (
         tracker.currentWidget !== null &&
         tracker.currentWidget === shell.currentWidget
