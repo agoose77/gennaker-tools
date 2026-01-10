@@ -16,8 +16,10 @@ import {
 } from '@codemirror/autocomplete';
 import type { Completion } from '@codemirror/autocomplete';
 
-const RESTART_RUN_STATELESS = 'gennaker-tools:restart-run-stateless';
-const RESET_JUPYTERLAB = 'gennaker-tools:reset-jupyterlab';
+namespace CommandIDs {
+  export const restartRunStateless = 'gennaker-tools:restart-run-stateless';
+  export const resetJupyterLab = 'gennaker-tools:reset-jupyterlab';
+}
 
 /**
  * Initialization data for the gennaker-tools extension.
@@ -37,18 +39,17 @@ export const statelessRunPlugin: JupyterFrontEndPlugin<void> = {
     const trans = (translator ?? nullTranslator).load('jupyterlab');
     const { commands, shell } = app;
 
-    console.log('JupyterLab extension gennaker-tools is activated!');
+    console.log('JupyterLab plugin gennaker-tools:stateless-run is activated!');
     // Add a command
 
     const isEnabled = () => {
-      console.log('enabed', { tracker, shell });
       return (
         tracker.currentWidget !== null &&
         tracker.currentWidget === shell.currentWidget
       );
     };
 
-    commands.addCommand(RESTART_RUN_STATELESS, {
+    commands.addCommand(CommandIDs.restartRunStateless, {
       label: 'Restart Kernel, Clear Outputs, and Run All Above Selected Cell',
       caption:
         'Clear all outputs, restart kernel, and run all cells above the selected cell',
@@ -56,7 +57,7 @@ export const statelessRunPlugin: JupyterFrontEndPlugin<void> = {
       execute: async (args: any) => {
         const orig = args['origin'];
         console.log(
-          `${RESTART_RUN_STATELESS} has been called from... ${orig}.`
+          `${CommandIDs.restartRunStateless} has been called from... ${orig}.`
         );
         if (orig !== 'init') {
           // Clear all outputs
@@ -73,7 +74,7 @@ export const statelessRunPlugin: JupyterFrontEndPlugin<void> = {
     // Add the command to the command palette
     const category = trans.__('Notebook Operations');
     palette.addItem({
-      command: RESTART_RUN_STATELESS,
+      command: CommandIDs.restartRunStateless,
       category,
       args: { origin: 'from palette' }
     });
@@ -94,10 +95,12 @@ export const reloadPlugin: JupyterFrontEndPlugin<void> = {
     palette: ICommandPalette,
     translator: ITranslator | null
   ) => {
+    console.log('JupyterLab plugin gennaker-tools:reload is activated!');
+
     const { commands } = app;
     const trans = (translator ?? nullTranslator).load('jupyterlab');
 
-    commands.addCommand(RESET_JUPYTERLAB, {
+    commands.addCommand(CommandIDs.resetJupyterLab, {
       label: 'Reset JupyterLab',
       caption: 'Reset JupyterLab',
       isEnabled: () => true,
@@ -112,7 +115,7 @@ export const reloadPlugin: JupyterFrontEndPlugin<void> = {
     // Add the command to the command palette
     const category = trans.__('Reset');
     palette.addItem({
-      command: RESET_JUPYTERLAB,
+      command: CommandIDs.resetJupyterLab,
       category,
       args: { origin: 'from palette' }
     });
@@ -171,6 +174,7 @@ export const snippetsPlugin: JupyterFrontEndPlugin<void> = {
   requires: [IEditorExtensionRegistry],
   optional: [],
   activate: (app: JupyterFrontEnd, registry: IEditorExtensionRegistry) => {
+    console.log('JupyterLab plugin gennaker-tools:snippets is activated!');
     registry.addExtension(
       Object.freeze({
         name: 'gennaker-tools:snippets',
