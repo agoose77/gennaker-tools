@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.1.4
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.1.3...795450402276c565914c01971d096d93afac9662))
+
+### Merged PRs
+
+- fix: command ID [#15](https://github.com/agoose77/gennaker-tools/pull/15) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2025-12-23&to=2026-01-10&type=c))
+
+[@agoose77](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2025-12-23..2026-01-10&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.1.3
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/c2dd80b54b1294fd7c581c9f1ca9241b02338093...3c9e5e267bd3b2d002290e79e9949a370bdeac79))
@@ -26,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2025-07-24&to=2025-12-23&type=c))
 
 [@agoose77](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2025-07-24..2025-12-23&type=Issues) | [@renovate](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Arenovate+updated%3A2025-07-24..2025-12-23&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.1.2
 
