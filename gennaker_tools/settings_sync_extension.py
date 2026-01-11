@@ -10,7 +10,6 @@ import aiofiles.os
 import tomli
 import json5
 import tomli_w
-import re
 import os
 
 
@@ -67,13 +66,6 @@ class SettingsSyncApp(ExtensionApp):
 
     def _is_toml_path(self, path: pathlib.Path) -> bool:
         return path.suffix == ".toml"
-
-    def _strip_comments(self, source: str) -> str:
-        without_single_line_comments = re.sub(r"//.*$", "", source, flags=re.MULTILINE)
-
-        return re.sub(
-            r"/\*[\s\S]*?\*/", "", without_single_line_comments, flags=re.MULTILINE
-        )
 
     async def _watched_files_need_sync(
         self, path: pathlib.Path, other_path: pathlib.Path
@@ -142,7 +134,6 @@ class SettingsSyncApp(ExtensionApp):
 
     async def _event_loop(self):
         await self._reconcile_initial(self.settings_path)
-        return
         async for changes in watchfiles.awatch(
             self.settings_path, stop_event=self._event
         ):
