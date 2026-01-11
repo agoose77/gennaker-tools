@@ -26,7 +26,8 @@ dependencies = [
     "tomli",
     "tomli_w",
     "watchfiles",
-    "aiofiles"
+    "aiofiles",
+    "json5"
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 

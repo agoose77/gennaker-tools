@@ -6,8 +6,9 @@ import pathlib
 import watchfiles
 import jupyter_server.serverapp
 import asyncio
+import aiofiles.os
 import tomli
-import json
+import json5
 import tomli_w
 import re
 import os
@@ -46,13 +47,6 @@ class SettingsSyncApp(ExtensionApp):
     def _is_toml_path(self, path: pathlib.Path) -> bool:
         return path.suffix == ".toml"
 
-    def _strip_comments(self, source: str) -> str:
-        without_single_line_comments = re.sub(r"//.*$", "", source, flags=re.MULTILINE)
-
-        return re.sub(
-            r"/\*[\s\S]*?\*/", "", without_single_line_comments, flags=re.MULTILINE
-        )
-
     async def _watched_files_need_sync(
         self, path: pathlib.Path, other_path: pathlib.Path
     ) -> bool:
@@ -63,36 +57,68 @@ class SettingsSyncApp(ExtensionApp):
         )
 
     async def _sync_watched_files(self, path: pathlib.Path, other_path: pathlib.Path):
-        if self._is_settings_path(path):
-            self.log.info(f"Synchronising JSON to TOML for {path}")
-            settings = json.loads(self._strip_comments(path.read_text()))
-            with open(other_path, "wb") as f:
-                tomli_w.dump(settings, f)
+        try:
+            if self._is_settings_path(path):
+                self.log.debug(f"Synchronising JSON to TOML for {path}")
+                settings = json5.loads(path.read_text())
+                with open(other_path, "wb") as f:
+                    tomli_w.dump(settings, f)
 
-        else:
-            self.log.info(f"Synchronising TOML to JSON for {path}")
-            with open(path, "rb") as f:
-                settings = tomli.load(f)
-            with open(other_path, "w") as sf:
-                json.dump(settings, sf, indent=2)
+            else:
+                self.log.debug(f"Synchronising TOML to JSON for {path}")
+                with open(path, "rb") as f:
+                    settings = tomli.load(f)
+                with open(other_path, "w") as sf:
+                    json5.dump(settings, sf, indent=2)
 
-        # Sync mtimes
-        stat = path.stat()
-        os.utime(other_path, (stat.st_atime, stat.st_mtime))
+            # Sync mtimes
+            stat = path.stat()
+            os.utime(other_path, (stat.st_atime, stat.st_mtime))
+
+        except Exception as exc:
+            self.log.error(f"Error reconciling {path} with {other_path} {exc}")
 
     async def _unsync_watched_files(self, path: pathlib.Path, other_path: pathlib.Path):
         if self._is_settings_path(path) and other_path.exists():
             other_path.unlink()
 
+    async def _reconcile_initial(self, root_path):
+        """
+        Reconcile existing files. No files will be deleted.
+        """
+        tasks = []
+
+        async def reconcile(path):
+            for entry in await aiofiles.os.scandir(path):
+                entry_path = pathlib.Path(entry.path)
+                if entry.is_dir():
+                    await reconcile(entry_path)
+                elif is_settings_path := self._is_settings_path(
+                    entry_path
+                ) or self._is_toml_path(entry_path):
+                    other_path = (
+                        self._settings_to_toml_path(entry_path)
+                        if is_settings_path
+                        else self._toml_to_settings_path(entry_path)
+                    )
+                    # Reconcile onto the "other" file if it doesn't exist, or it's older than us
+                    if (
+                        not other_path.exists()
+                        or other_path.stat().st_mtime <= entry.stat().st_mtime
+                    ):
+                        tasks.append(self._sync_watched_files(entry_path, other_path))
+
+        await reconcile(root_path)
+        await asyncio.gather(*tasks)
+
     async def _event_loop(self):
+        await self._reconcile_initial(self.settings_path)
+
         async for changes in watchfiles.awatch(
             self.settings_path, stop_event=self._event
         ):
             for change, _path in changes:
-                try:
-                    await self._reconcile_change(change, pathlib.Path(_path))
-                except Exception as exc:
-                    self.log.error(exc)
+                await self._reconcile_change(change, pathlib.Path(_path))
 
     async def _reconcile_change(self, change, path):
         # Ignore .~ files
