@@ -56,16 +56,21 @@ class SettingsSyncApp(ExtensionApp):
     async def _watched_files_need_sync(
         self, path: pathlib.Path, other_path: pathlib.Path
     ) -> bool:
-        return path.stat().st_mtime != other_path.stat().st_mtime
+        return not (
+            path.exists()
+            and other_path.exists()
+            and path.stat().st_mtime == other_path.stat().st_mtime
+        )
 
     async def _sync_watched_files(self, path: pathlib.Path, other_path: pathlib.Path):
-        self.log.info(f"Detected change in {path} file, synchronising")
         if self._is_settings_path(path):
+            self.log.info(f"Synchronising JSON to TOML for {path}")
             settings = json.loads(self._strip_comments(path.read_text()))
             with open(other_path, "wb") as f:
                 tomli_w.dump(settings, f)
 
         else:
+            self.log.info(f"Synchronising TOML to JSON for {path}")
             with open(path, "rb") as f:
                 settings = tomli.load(f)
             with open(other_path, "w") as sf:
@@ -106,6 +111,7 @@ class SettingsSyncApp(ExtensionApp):
             else self._settings_to_toml_path(path)
         )
 
+        self.log.info(f"Detected change {change} in {path} file, synchronising")
         # Now we have either TOML or JSON setting files
         # File needs deleting
         if change == watchfiles.Change.deleted:
