@@ -1,7 +1,7 @@
 from jupyter_server.extension.application import ExtensionApp
 import jupyterlab.commands
 
-from traitlets import Instance, default, validate, TraitError
+from traitlets import Instance, default, validate, TraitError, Unicode
 import pathlib
 import watchfiles
 import jupyter_server.serverapp
@@ -10,7 +10,6 @@ import aiofiles.os
 import tomli
 import json5
 import tomli_w
-import re
 import os
 
 
@@ -19,6 +18,7 @@ class SettingsSyncApp(ExtensionApp):
     name = "settings-sync"
     load_other_extensions = True
     settings_path = Instance(pathlib.Path)
+    null_sentinel = Unicode("__NULL__")
 
     _task = Instance(asyncio.Task, allow_none=True)
     _event = Instance(asyncio.Event, allow_none=True)
@@ -34,6 +34,26 @@ class SettingsSyncApp(ExtensionApp):
         except TypeError:
             raise TraitError("settings_path should be a valid pathlike value")
         return _path
+
+    def _json_mapping_to_toml(self, mapping):
+        return {
+            key: self._json_mapping_to_toml(value)
+            if isinstance(value, dict)
+            else self.null_sentinel
+            if value is None
+            else value
+            for key, value in mapping.items()
+        }
+
+    def _toml_mapping_to_json(self, mapping):
+        return {
+            key: self._toml_mapping_to_json(value)
+            if isinstance(value, dict)
+            else None
+            if value == self.null_sentinel
+            else value
+            for key, value in mapping.items()
+        }
 
     def _toml_to_settings_path(self, path: pathlib.Path) -> pathlib.Path:
         return path.with_name(path.stem)
@@ -60,14 +80,14 @@ class SettingsSyncApp(ExtensionApp):
         try:
             if self._is_settings_path(path):
                 self.log.debug(f"Synchronising JSON to TOML for {path}")
-                settings = json5.loads(path.read_text())
+                settings = self._json_mapping_to_toml(json5.loads(path.read_text()))
                 with open(other_path, "wb") as f:
                     tomli_w.dump(settings, f)
 
             else:
                 self.log.debug(f"Synchronising TOML to JSON for {path}")
                 with open(path, "rb") as f:
-                    settings = tomli.load(f)
+                    settings = self._toml_mapping_to_json(tomli.load(f))
                 with open(other_path, "w") as sf:
                     json5.dump(settings, sf, indent=2)
 
@@ -91,10 +111,11 @@ class SettingsSyncApp(ExtensionApp):
         async def reconcile(path):
             for entry in await aiofiles.os.scandir(path):
                 entry_path = pathlib.Path(entry.path)
+
                 if entry.is_dir():
                     await reconcile(entry_path)
-                elif is_settings_path := self._is_settings_path(
-                    entry_path
+                elif (
+                    is_settings_path := self._is_settings_path(entry_path)
                 ) or self._is_toml_path(entry_path):
                     other_path = (
                         self._settings_to_toml_path(entry_path)
@@ -113,7 +134,6 @@ class SettingsSyncApp(ExtensionApp):
 
     async def _event_loop(self):
         await self._reconcile_initial(self.settings_path)
-
         async for changes in watchfiles.awatch(
             self.settings_path, stop_event=self._event
         ):
