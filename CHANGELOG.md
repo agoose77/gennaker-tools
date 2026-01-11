@@ -2,11 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.1.6
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.1.5...0403a7b883afedf5634d7446c88a8bc1b3a9d842))
+
+### Bugs fixed
+
+- fix: handle round-trip and null [#17](https://github.com/agoose77/gennaker-tools/pull/17) ([@agoose77](https://github.com/agoose77))
+
+### Other merged PRs
+
+- Fix: perform initial reconciliation [#16](https://github.com/agoose77/gennaker-tools/pull/16) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-01-11&to=2026-01-11&type=c))
+
+[@agoose77](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-01-11..2026-01-11&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.1.5
 
 No merged PRs
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.1.4
 
