@@ -48,7 +48,7 @@ jobs:
           pip uninstall -y "gennaker-tools" jupyterlab
 
       - name: Upload extension packages
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: extension-artifacts
           path: dist/gennaker_tools*
@@ -64,7 +64,7 @@ jobs:
         with:
           python-version: '3.14.2'
           architecture: 'x64'
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           name: extension-artifacts
       - name: Install and Test
