@@ -34,7 +34,7 @@ jobs:
       - run: pip install github-activity==1.0.3
       - name: Prep Release
         id: prep-release
-        uses: jupyter-server/jupyter_releaser/.github/actions/prep-release@v1.10.1
+        uses: jupyter-server/jupyter_releaser/.github/actions/prep-release@v1.10.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version_spec: ${{ github.event.inputs.version_spec }}
