@@ -2,6 +2,32 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.2.0
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.1.6...aa7f7967572d33167af8aacbcc3f6079e8b3a1fa))
+
+### Maintenance and upkeep improvements
+
+- deps: Update jupyter-server/jupyter_releaser action to v1.10.2 [#20](https://github.com/agoose77/gennaker-tools/pull/20) ()
+- deps: Update gha (major) [#19](https://github.com/agoose77/gennaker-tools/pull/19) ()
+- deps: Update gha [#18](https://github.com/agoose77/gennaker-tools/pull/18) ()
+
+### Other merged PRs
+
+- feat: only log filename [#22](https://github.com/agoose77/gennaker-tools/pull/22) ([@agoose77](https://github.com/agoose77))
+- fix: only print when actual reconciliation occurs [#21](https://github.com/agoose77/gennaker-tools/pull/21) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-01-11&to=2026-01-28&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-01-11..2026-01-28&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.1.6
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.1.5...0403a7b883afedf5634d7446c88a8bc1b3a9d842))
@@ -19,8 +45,6 @@
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-01-11&to=2026-01-11&type=c))
 
 [@agoose77](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-01-11..2026-01-11&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.1.5
 
