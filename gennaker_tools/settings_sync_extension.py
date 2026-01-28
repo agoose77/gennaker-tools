@@ -163,18 +163,18 @@ class SettingsSyncApp(ExtensionApp):
             # Now we have either TOML or JSON setting files
             # File needs deleting
             case watchfiles.Change.deleted:
-                self.log.info(f"Detected deletion of {path} file, synchronising")
+                self.log.info(f"Detected deletion of {path.name} file, synchronising")
                 await self._unsync_watched_files(path, other_path)
             case watchfiles.Change.added:
                 if await self._watched_files_need_sync(path, other_path):
                     self.log.info(
-                        f"Detected addition of {path} file, creating {other_path}"
+                        f"Detected addition of {path.name} file, creating {other_path.name}"
                     )
                     await self._sync_watched_files(path, other_path)
             case watchfiles.Change.modified:
                 if await self._watched_files_need_sync(path, other_path):
                     self.log.info(
-                        f"Detected modification of {path} file, updating {other_path}"
+                        f"Detected modification of {path.name} file, updating {other_path.name}"
                     )
                     await self._sync_watched_files(path, other_path)
 
