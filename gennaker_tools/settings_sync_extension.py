@@ -157,16 +157,26 @@ class SettingsSyncApp(ExtensionApp):
             else self._settings_to_toml_path(path)
         )
 
-        self.log.info(f"Detected change {change} in {path} file, synchronising")
-        # Now we have either TOML or JSON setting files
-        # File needs deleting
-        if change == watchfiles.Change.deleted:
-            await self._unsync_watched_files(path, other_path)
+        self.log.debug(f"Detected filesystem change {change} in {path} file")
 
-        # Files might need syncing
-        elif change == watchfiles.Change.added or change == watchfiles.Change.modified:
-            if await self._watched_files_need_sync(path, other_path):
-                await self._sync_watched_files(path, other_path)
+        match change:
+            # Now we have either TOML or JSON setting files
+            # File needs deleting
+            case watchfiles.Change.deleted:
+                self.log.info(f"Detected deletion of {path} file, synchronising")
+                await self._unsync_watched_files(path, other_path)
+            case watchfiles.Change.added:
+                if await self._watched_files_need_sync(path, other_path):
+                    self.log.info(
+                        f"Detected addition of {path} file, creating {other_path}"
+                    )
+                    await self._sync_watched_files(path, other_path)
+            case watchfiles.Change.modified:
+                if await self._watched_files_need_sync(path, other_path):
+                    self.log.info(
+                        f"Detected modification of {path} file, updating {other_path}"
+                    )
+                    await self._sync_watched_files(path, other_path)
 
     async def _start_jupyter_server_extension(self, app):
         self._event = asyncio.Event()
