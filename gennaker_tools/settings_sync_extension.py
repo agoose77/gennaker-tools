@@ -1,8 +1,9 @@
 from jupyter_server.extension.application import ExtensionApp
 import jupyterlab.commands
 
-from traitlets import Instance, default, validate, TraitError, Unicode
+from traitlets import Instance, default, validate, TraitError, Unicode, List
 import pathlib
+import fnmatch
 import watchfiles
 import jupyter_server.serverapp
 import asyncio
@@ -19,6 +20,7 @@ class SettingsSyncApp(ExtensionApp):
     load_other_extensions = True
     settings_path = Instance(pathlib.Path)
     null_sentinel = Unicode("__NULL__")
+    ignore_patterns = List(Unicode(), [".ipynb_checkpoints", ".~*"])
 
     _task = Instance(asyncio.Task, allow_none=True)
     _event = Instance(asyncio.Event, allow_none=True)
@@ -67,6 +69,14 @@ class SettingsSyncApp(ExtensionApp):
     def _is_toml_path(self, path: pathlib.Path) -> bool:
         return path.suffix == ".toml"
 
+    def _change_is_observed(self, change: watchfiles.Change, path: str) -> bool:
+        _path = pathlib.Path(path)
+        return not any(
+            fnmatch.fnmatch(part, pat)
+            for part in _path.relative_to(self.settings_path).parts
+            for pat in self.ignore_patterns
+        )
+
     async def _watched_files_need_sync(
         self, path: pathlib.Path, other_path: pathlib.Path
     ) -> bool:
@@ -106,11 +116,15 @@ class SettingsSyncApp(ExtensionApp):
         """
         Reconcile existing files. No files will be deleted.
         """
-        tasks = []
 
-        async def reconcile(path):
-            for entry in await aiofiles.os.scandir(path):
+        async def reconcile(dir_path):
+            for entry in await aiofiles.os.scandir(dir_path):
                 entry_path = pathlib.Path(entry.path)
+                # Ignored directories/files should be skipped
+                if any(
+                    fnmatch.fnmatch(entry_path.name, p) for p in self.ignore_patterns
+                ):
+                    continue
 
                 if entry.is_dir():
                     await reconcile(entry_path)
@@ -127,24 +141,22 @@ class SettingsSyncApp(ExtensionApp):
                         not other_path.exists()
                         or other_path.stat().st_mtime <= entry.stat().st_mtime
                     ):
-                        tasks.append(self._sync_watched_files(entry_path, other_path))
+                        await self._sync_watched_files(entry_path, other_path)
 
         await reconcile(root_path)
-        await asyncio.gather(*tasks)
 
     async def _event_loop(self):
         await self._reconcile_initial(self.settings_path)
         async for changes in watchfiles.awatch(
-            self.settings_path, stop_event=self._event
+            self.settings_path,
+            stop_event=self._event,
+            watch_filter=self._change_is_observed,
         ):
-            for change, _path in changes:
-                await self._reconcile_change(change, pathlib.Path(_path))
+            for change, _change_path in changes:
+                change_path = pathlib.Path(_change_path)
+                await self._reconcile_change(change, change_path)
 
     async def _reconcile_change(self, change, path):
-        # Ignore .~ files
-        if path.name.startswith(".~"):
-            return
-
         # Only process settings files
         path_is_toml = self._is_toml_path(path)
         if not (path_is_toml or self._is_settings_path(path)):
