@@ -139,7 +139,7 @@ class SettingsSyncApp(ExtensionApp):
                     # Reconcile onto the "other" file if it doesn't exist, or it's older than us
                     if (
                         not other_path.exists()
-                        or other_path.stat().st_mtime <= entry.stat().st_mtime
+                        or other_path.stat().st_mtime < entry.stat().st_mtime
                     ):
                         await self._sync_watched_files(entry_path, other_path)
 
