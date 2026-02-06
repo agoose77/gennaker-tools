@@ -1,7 +1,16 @@
 from jupyter_server.extension.application import ExtensionApp
 import jupyterlab.commands
 
-from traitlets import Instance, default, validate, TraitError, Unicode, List, Union
+from traitlets import (
+    Instance,
+    default,
+    validate,
+    TraitError,
+    Unicode,
+    List,
+    Union,
+    Bool,
+)
 import pathlib
 import fnmatch
 import watchfiles
@@ -42,6 +51,7 @@ class SettingsSyncApp(ExtensionApp):
         help="Glob patterns for file names to ignore.",
         config=True,
     )
+    watch_for_changes = Bool(config=True)
 
     _task = Instance(asyncio.Task, allow_none=True)
     _event = Instance(asyncio.Event, allow_none=True)
@@ -100,7 +110,7 @@ class SettingsSyncApp(ExtensionApp):
 
     def _is_toml_path(self, path: pathlib.Path) -> bool:
         return path.is_relative_to(self.dest_path) and re.match(
-            ".*\.jupyterlab-settings.toml", path.name
+            r".*\.jupyterlab-settings.toml", path.name
         )
 
     def _change_is_observed(self, change: watchfiles.Change, path: str) -> bool:
@@ -201,7 +211,8 @@ class SettingsSyncApp(ExtensionApp):
 
     async def _event_loop(self):
         await self.perform_initial_reconciliation()
-        await self.watch_for_changes()
+        if self.watch_for_changes:
+            await self.watch_for_changes()
 
     async def _reconcile_change(self, change, path):
         # Only process settings files
