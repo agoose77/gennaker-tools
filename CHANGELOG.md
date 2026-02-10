@@ -2,6 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.4.1
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.4.0...fc918dead7564757c57a140e9ee19d4591ef2df0))
+
+### Merged PRs
+
+- fix: resolve filepaths [#25](https://github.com/agoose77/gennaker-tools/pull/25) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-02-06&to=2026-02-10&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-02-06..2026-02-10&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.3.0...38893e142146cf7d7c81c6b68c53d48b16a77ba2))
@@ -18,8 +37,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-02-04&to=2026-02-06&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-02-04..2026-02-06&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.0
 
