@@ -67,7 +67,7 @@ class SettingsSyncApp(ExtensionApp):
     @validate("source_path", "dest_path")
     def _valid_source_path(self, proposal):
         try:
-            _path = pathlib.Path(proposal["value"])
+            _path = pathlib.Path(proposal["value"]).resolve()
         except TypeError:
             raise TraitError(
                 f"{proposal['trait'].name} should be a valid pathlike value"
