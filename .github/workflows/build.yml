@@ -62,7 +62,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.14.2'
+          python-version: '3.14.3'
           architecture: 'x64'
       - uses: actions/download-artifact@v7
         with:
