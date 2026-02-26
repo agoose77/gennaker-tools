@@ -6,14 +6,14 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
   };
   outputs = {
     self,
     nixpkgs,
-    flake-utils,
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
+  }: let
+    forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+  in {
+    devShells = forAllSystems (system: let
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -21,10 +21,12 @@
       inherit (pkgs) lib;
 
       python = pkgs.python313;
+      manyLinux = pkgs.pythonManylinuxPackages.manylinux2014;
       node = pkgs.nodejs_24;
       packages =
         [
           python
+          python.pkgs.venvShellHook
           node
         ]
         ++ (with pkgs; [
@@ -33,44 +35,39 @@
           gcc
           pre-commit
         ]);
-      shellHook = ''
-        # Unset leaky PYTHONPATH
-        unset PYTHONPATH
-
-        __hash=$(echo ${python.interpreter} | sha256sum)
-
-        # Setup if not defined ####
-        if [[ ! -f ".venv/$__hash" ]]; then
-            __setup_env() {
-                # Remove existing venv
-                if [[ -d .venv ]]; then
-                    rm -r .venv
-                fi
-
-                # Stand up new venv
-                ${python.interpreter} -m venv .venv
-
-                ".venv/bin/python" -m pip install -e "."
-
-                # Add a marker that marks this venv as "ready"
-                touch ".venv/$__hash"
-            }
-
-            __setup_env
-        fi
-        ###########################
-
-        # Activate venv
-        source .venv/bin/activate
+      # Unset these unwanted env vars
+      # PYTHONPATH bleeds from Nix Python packages
+      unwantedEnvPreamble = ''
+        unset SOURCE_DATE_EPOCH PYTHONPATH
       '';
-      env = lib.optionalAttrs pkgs.stdenv.isLinux {
-        # Python uses dynamic loading for certain libraries.
-        # We'll set the linker path instead of patching RPATH
-        LD_LIBRARY_PATH = lib.makeLibraryPath pkgs.pythonManylinuxPackages.manylinux2014;
-      };
     in {
-      devShell = pkgs.mkShell {
-        inherit env packages shellHook;
+      default = pkgs.mkShell {
+        inherit packages;
+        # Define additional input for patching interpreter
+        nativeBuildInputs = [pkgs.makeWrapper];
+
+        venvDir = ".venv";
+
+        # Drop bad env vars on activation
+        postShellHook = unwantedEnvPreamble;
+
+        # Setup venv by patching interpreter with LD_LIBRARY_PATH
+        # This is required because ld does not exist on Nix systems
+        postVenvCreation = let
+          # Find the interpreter of the venv
+          interpreterSubPath = lib.path.subpath.join ["bin" (baseNameOf python.interpreter)];
+        in
+          unwantedEnvPreamble
+          # Patch the venv to find the dynamic libs
+          + ''
+            wrapProgram "$VIRTUAL_ENV/${interpreterSubPath}" --prefix "LD_LIBRARY_PATH" : "${lib.makeLibraryPath manyLinux}"
+          ''
+          +
+          # Install package
+          ''
+            pip install -e ".[dev]"
+          '';
       };
     });
+  };
 }
