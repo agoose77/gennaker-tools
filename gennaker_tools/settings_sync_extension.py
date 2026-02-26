@@ -96,11 +96,11 @@ class SettingsSyncApp(ExtensionApp):
 
     def _toml_to_source_path(self, path: pathlib.Path) -> pathlib.Path:
         sub_path = path.relative_to(self.dest_path)
-        return self.source_path / sub_path.with_name(path.stem)
+        return self.source_path / sub_path.with_suffix(".jupyterlab-settings")
 
     def _settings_to_toml_path(self, path: pathlib.Path) -> pathlib.Path:
         sub_path = path.relative_to(self.source_path)
-        return self.dest_path / sub_path.with_name(f"{path.name}.toml")
+        return self.dest_path / sub_path.with_suffix(".toml")
 
     def _is_source_path(self, path: pathlib.Path) -> bool:
         return (
@@ -109,9 +109,7 @@ class SettingsSyncApp(ExtensionApp):
         )
 
     def _is_toml_path(self, path: pathlib.Path) -> bool:
-        return path.is_relative_to(self.dest_path) and re.match(
-            r".*\.jupyterlab-settings.toml", path.name
-        )
+        return path.is_relative_to(self.dest_path) and path.suffix == ".toml"
 
     def _change_is_observed(self, change: watchfiles.Change, path: str) -> bool:
         _path = pathlib.Path(path)
