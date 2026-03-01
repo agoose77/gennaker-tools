@@ -2,6 +2,34 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.5.0
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.4.1...36b9858b70d7a140b2a8eca30e222600de303efc))
+
+### Enhancements made
+
+- Add a hook for settings file changes [#29](https://github.com/agoose77/gennaker-tools/pull/29) ([@agoose77](https://github.com/agoose77))
+
+### Maintenance and upkeep improvements
+
+- deps: Update dependency python to v3.14.3 [#26](https://github.com/agoose77/gennaker-tools/pull/26) ()
+
+### Other merged PRs
+
+- fix: update flake [#28](https://github.com/agoose77/gennaker-tools/pull/28) ([@agoose77](https://github.com/agoose77))
+- Fix NixOS env [#27](https://github.com/agoose77/gennaker-tools/pull/27) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-02-10&to=2026-03-01&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-02-10..2026-03-01&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.1
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.4.0...fc918dead7564757c57a140e9ee19d4591ef2df0))
@@ -18,8 +46,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-02-06&to=2026-02-10&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-02-06..2026-02-10&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0
 
