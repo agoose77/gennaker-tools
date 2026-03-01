@@ -2,6 +2,7 @@ from jupyter_server.extension.application import ExtensionApp
 import jupyterlab.commands
 
 from traitlets import (
+    Callable,
     Instance,
     default,
     validate,
@@ -39,7 +40,6 @@ class SettingsSyncApp(ExtensionApp):
         help="Filepath to the desination TOML settings.",
         config=True,
     )
-
     null_sentinel = Unicode(
         "__NULL__",
         help="Sentinel string value to represent null values in TOML.",
@@ -51,7 +51,15 @@ class SettingsSyncApp(ExtensionApp):
         help="Glob patterns for file names to ignore.",
         config=True,
     )
-    watch_for_changes = Bool(config=True)
+    watch_for_changes = Bool(
+        True, config=True, help="Turn off watcher for settings synchronisation."
+    )
+    settings_changed_hook = Callable(
+        None,
+        allow_none=True,
+        config=True,
+        help="Callable hook to invoke if a settings file is changed. This hook will be called with the root JSON settings path, the path to the JSON file (even if the TOML file was changed), and the parsed settings data. The hook must return a new (or mutated) settings object if defined.",
+    )
 
     _task = Instance(asyncio.Task, allow_none=True)
     _event = Instance(asyncio.Event, allow_none=True)
@@ -133,6 +141,11 @@ class SettingsSyncApp(ExtensionApp):
             and path.stat().st_mtime == other_path.stat().st_mtime
         )
 
+    def _invoke_file_changed_hook(self, json_path, contents):
+        if callable(self.settings_changed_hook):
+            return self.settings_changed_hook(self.source_path, json_path, contents)
+        return contents
+
     async def _sync_watched_files(self, path: pathlib.Path, other_path: pathlib.Path):
         # Ensure that the destinations exist
         path.parent.mkdir(exist_ok=True, parents=True)
@@ -141,14 +154,19 @@ class SettingsSyncApp(ExtensionApp):
         try:
             if self._is_source_path(path):
                 self.log.debug(f"Synchronising JSON to TOML for {path}")
-                settings = self._json_mapping_to_toml(json5.loads(path.read_text()))
+                settings = self._invoke_file_changed_hook(
+                    path, self._json_mapping_to_toml(json5.loads(path.read_text()))
+                )
+
                 with open(other_path, "wb") as f:
                     tomli_w.dump(settings, f)
 
             else:
                 self.log.debug(f"Synchronising TOML to JSON for {path}")
                 with open(path, "rb") as f, open(other_path, "w") as sf:
-                    settings = self._toml_mapping_to_json(tomli.load(f))
+                    settings = self._invoke_file_changed_hook(
+                        other_path, self._toml_mapping_to_json(tomli.load(f))
+                    )
                     json5.dump(settings, sf, indent=2)
 
             # Sync mtimes
@@ -196,7 +214,7 @@ class SettingsSyncApp(ExtensionApp):
         await reconcile(self.source_path)
         await reconcile(self.dest_path)
 
-    async def watch_for_changes(self):
+    async def watch_and_reconcile_changes(self):
         async for changes in watchfiles.awatch(
             self.source_path,
             self.dest_path,
@@ -208,9 +226,12 @@ class SettingsSyncApp(ExtensionApp):
                 await self._reconcile_change(change, change_path)
 
     async def _event_loop(self):
-        await self.perform_initial_reconciliation()
-        if self.watch_for_changes:
-            await self.watch_for_changes()
+        try:
+            await self.perform_initial_reconciliation()
+            if self.watch_for_changes:
+                await self.watch_and_reconcile_changes()
+        except Exception:
+            self.log.error("An unknown error occured", exc_info=True)
 
     async def _reconcile_change(self, change, path):
         # Only process settings files
