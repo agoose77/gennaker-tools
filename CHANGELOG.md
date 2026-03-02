@@ -2,6 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.6.0
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.5.0...85a1e5673e391d7628982a9f07599e50b1c78c62))
+
+### Enhancements made
+
+- feat: add settings change handler [#31](https://github.com/agoose77/gennaker-tools/pull/31) ([@agoose77](https://github.com/agoose77))
+
+### Maintenance and upkeep improvements
+
+- refactor: clean up code layout [#30](https://github.com/agoose77/gennaker-tools/pull/30) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-03-01&to=2026-03-02&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-03-01..2026-03-02&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.5.0
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.4.1...36b9858b70d7a140b2a8eca30e222600de303efc))
@@ -27,8 +50,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-02-10&to=2026-03-01&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-02-10..2026-03-01&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.1
 
