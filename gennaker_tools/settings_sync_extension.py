@@ -24,11 +24,15 @@ import re
 import tomli_w
 import os
 
+from .handlers import SettingsChangedHandler
+
 
 class SettingsSyncApp(ExtensionApp):
-    # -------------- Required traits --------------
     name = "settings-sync"
     load_other_extensions = True
+    handlers = [
+        (r"gennaker-tools/settings-changed", SettingsChangedHandler),
+    ]
 
     source_path = Union(
         (Instance(pathlib.Path), Unicode()),
@@ -81,6 +85,14 @@ class SettingsSyncApp(ExtensionApp):
                 f"{proposal['trait'].name} should be a valid pathlike value"
             )
         return _path
+
+    def initialize_settings(self):
+        self.settings["settings_handlers"] = []
+
+    def notify_file_changed(self, change: watchfiles.Change, file_path: pathlib.Path):
+        for handler in self.settings["settings_handlers"]:
+            file_type = "json" if self.is_json_path(file_path) else "toml"
+            handler.on_settings_changed(file_path, change.raw_str(), file_type)
 
     def prepare_json_map_for_toml(self, mapping: dict) -> dict:
         return {
@@ -209,18 +221,21 @@ class SettingsSyncApp(ExtensionApp):
                     f"Detected deletion of {path.name} settings file, synchronising"
                 )
                 await self.unsync_watched_files(path, other_path)
+                self.notify_file_changed(change, path)
             case watchfiles.Change.added:
                 if await self.files_require_sync(path, other_path):
                     self.log.info(
                         f"Detected addition of {path.name} settings file, creating {other_path.name}"
                     )
                     await self.sync_watched_files(path, other_path)
+                    self.notify_file_changed(change, path)
             case watchfiles.Change.modified:
                 if await self.files_require_sync(path, other_path):
                     self.log.info(
                         f"Detected modification of {path.name} settings file, updating {other_path.name}"
                     )
                     await self.sync_watched_files(path, other_path)
+                    self.notify_file_changed(change, path)
 
     async def perform_initial_reconciliation(self):
         """
