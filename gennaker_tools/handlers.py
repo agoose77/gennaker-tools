@@ -26,15 +26,15 @@ class SettingsChangedHandler(JupyterHandler, websocket.WebSocketHandler):
         return await super().get(*args, **kwargs)
 
     def open(self):
-        self.log.info("Opened!")
+        self.log.debug("Opened websocket")
         self.settings["settings_handlers"].append(self)
 
     def on_close(self):
-        self.log.info("Closed!")
+        self.log.debug("Closed websocket")
         self.settings["settings_handlers"].remove(self)
 
     async def on_message(self, message):
-        self.log.info(f"Message! {message}")
+        self.log.debug("Received message from frontend")
 
     def on_settings_changed(self, file_path, change, file_type):
         root = self.serverapp.root_dir

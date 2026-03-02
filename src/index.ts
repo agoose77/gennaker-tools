@@ -1,17 +1,12 @@
 import { snippetsPlugin } from './snippets.js';
 import { reloadPlugin } from './reload.js';
 import { statelessRunPlugin } from './statelessRun.js';
-import { settingsChangedPlugin } from './settingsChanged.js';
+import { tomlSyncPlugin } from './tomlSync.js';
 
-export {
-  snippetsPlugin,
-  statelessRunPlugin,
-  reloadPlugin,
-  settingsChangedPlugin
-};
+export { snippetsPlugin, statelessRunPlugin, reloadPlugin, tomlSyncPlugin };
 export default [
   statelessRunPlugin,
   reloadPlugin,
   snippetsPlugin,
-  settingsChangedPlugin
+  tomlSyncPlugin
 ];
