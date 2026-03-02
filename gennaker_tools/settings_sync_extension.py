@@ -12,19 +12,42 @@ from traitlets import (
     Union,
     Bool,
 )
+import enum
 import pathlib
 import fnmatch
 import watchfiles
 import jupyter_server.serverapp
 import asyncio
-import aiofiles.os
 import tomli
 import json5
-import re
 import tomli_w
+import functools
 import os
 
 from .handlers import SettingsChangedHandler
+
+
+class FileSystemEvent(enum.StrEnum):
+    deleted = enum.auto()
+    modified = enum.auto()
+
+
+def operation(func):
+    @functools.wraps(func)
+    def wrapper(self, source, dest):
+        method = func.__get__(self)
+        try:
+            method(source, dest)
+        except Exception:
+            self.log.error(
+                f"An error occurred during synchronisation of {source.name} onto {dest.name}"
+            )
+            return False
+        else:
+            self.log.info(f"Synchronising {source.name} onto {dest.name}")
+            return True
+
+    return wrapper
 
 
 class SettingsSyncApp(ExtensionApp):
@@ -89,10 +112,14 @@ class SettingsSyncApp(ExtensionApp):
     def initialize_settings(self):
         self.settings["settings_handlers"] = []
 
-    def notify_file_changed(self, change: watchfiles.Change, file_path: pathlib.Path):
+    def notify_toml_changed(self, toml_path: pathlib.Path, fs_event: FileSystemEvent):
         for handler in self.settings["settings_handlers"]:
-            file_type = "json" if self.is_json_path(file_path) else "toml"
-            handler.on_settings_changed(file_path, change.raw_str(), file_type)
+            handler.notify_toml_changed(toml_path, fs_event)
+
+    def pre_process_settings(self, json_path: pathlib.Path, contents: dict) -> dict:
+        if callable(self.settings_changed_hook):
+            return self.settings_changed_hook(self.source_path, json_path, contents)
+        return contents
 
     def prepare_json_map_for_toml(self, mapping: dict) -> dict:
         return {
@@ -134,154 +161,165 @@ class SettingsSyncApp(ExtensionApp):
     def name_is_ignored(self, name: str) -> bool:
         return any(fnmatch.fnmatch(name, pat) for pat in self.ignore_patterns)
 
-    def change_might_require_sync(self, change: watchfiles.Change, path: str) -> bool:
-        _path = pathlib.Path(path)
-        if _path.is_relative_to(self.source_path):
-            sub_path = _path.relative_to(self.source_path)
+    def path_is_tracked(self, path: str) -> bool:
+        path = pathlib.Path(path)
+        if path.is_relative_to(self.source_path):
+            sub_path = path.relative_to(self.source_path)
         else:
-            sub_path = _path.relative_to(self.dest_path)
+            sub_path = path.relative_to(self.dest_path)
 
-        return not any(self.name_is_ignored(part) for part in sub_path.parts)
+        if any(self.name_is_ignored(part) for part in sub_path.parts):
+            return False
 
-    def pre_process_settings(self, json_path: pathlib.Path, contents: dict) -> dict:
-        if callable(self.settings_changed_hook):
-            return self.settings_changed_hook(self.source_path, json_path, contents)
-        return contents
+        return self.is_toml_path(path) or self.is_json_path(path)
 
-    async def files_require_sync(
-        self, path: pathlib.Path, other_path: pathlib.Path
+    def file_is_newer(
+        self, source_path: pathlib.Path, reference_path: pathlib.Path
     ) -> bool:
 
-        # TODO: make this async
-        return not (
-            path.exists()
-            and other_path.exists()
-            and path.stat().st_mtime == other_path.stat().st_mtime
-        )
+        return source_path.stat().st_mtime > reference_path.stat().st_mtime
 
-    async def sync_watched_files(self, path: pathlib.Path, other_path: pathlib.Path):
-        # Ensure that the destinations exist
-        path.parent.mkdir(exist_ok=True, parents=True)
-        other_path.parent.mkdir(exist_ok=True, parents=True)
+    def sync_file_mtimes(self, source_path: pathlib.Path, target_path: pathlib.Path):
+        stat = source_path.stat()
+        os.utime(target_path, (stat.st_atime, stat.st_mtime))
 
+    # Sync routines ########################
+    @operation
+    def sync_json_modification_to_toml(
+        self, json_path: pathlib.Path, toml_path: pathlib.Path
+    ):
         try:
-            if self.is_json_path(path):
-                self.log.debug(f"Synchronising JSON to TOML for {path}")
-                with open(path, "rb") as sf, open(other_path, "wb") as tf:
-                    settings = self.pre_process_settings(
-                        path, self.prepare_json_map_for_toml(json5.load(sf))
-                    )
-                    tomli_w.dump(settings, tf)
+            # Ensure that the destination exists
+            toml_path.parent.mkdir(exist_ok=True, parents=True)
 
-            else:
-                self.log.debug(f"Synchronising TOML to JSON for {path}")
-                with open(path, "rb") as sf, open(other_path, "w") as tf:
-                    settings = self.pre_process_settings(
-                        other_path, self.prepare_toml_map_for_json(tomli.load(sf))
-                    )
-                    json5.dump(settings, tf, indent=2)
-
-            # Sync mtimes
-            stat = path.stat()
-            os.utime(other_path, (stat.st_atime, stat.st_mtime))
-
-        except Exception as exc:
-            if self.is_json_path(path):
-                sub_path = path.relative_to(self.source_path)
-            else:
-                sub_path = path.relative_to(self.dest_path)
-            self.log.error(
-                f"Error reconciling {sub_path} with {other_path.name}: {exc}"
-            )
-
-    async def unsync_watched_files(self, path: pathlib.Path, other_path: pathlib.Path):
-        if self.is_json_path(path) and other_path.exists():
-            other_path.unlink()
-
-    async def reconcile_change(self, change: watchfiles.Change, path: pathlib.Path):
-        # Only process settings files
-        path_is_toml = self.is_toml_path(path)
-        if not (path_is_toml or self.is_json_path(path)):
-            return
-
-        # Find other path
-        other_path = (
-            self.toml_to_json_path(path)
-            if path_is_toml
-            else self.json_to_toml_path(path)
-        )
-
-        self.log.debug(f"Detected filesystem change {change} in {path} file")
-
-        match change:
-            # Now we have either TOML or JSON setting files
-            # File needs deleting
-            case watchfiles.Change.deleted:
-                self.log.info(
-                    f"Detected deletion of {path.name} settings file, synchronising"
+            with open(json_path, "rb") as sf, open(toml_path, "wb") as tf:
+                settings = self.pre_process_settings(
+                    json_path, self.prepare_json_map_for_toml(json5.load(sf))
                 )
-                await self.unsync_watched_files(path, other_path)
-                self.notify_file_changed(change, path)
-            case watchfiles.Change.added:
-                if await self.files_require_sync(path, other_path):
-                    self.log.info(
-                        f"Detected addition of {path.name} settings file, creating {other_path.name}"
-                    )
-                    await self.sync_watched_files(path, other_path)
-                    self.notify_file_changed(change, path)
-            case watchfiles.Change.modified:
-                if await self.files_require_sync(path, other_path):
-                    self.log.info(
-                        f"Detected modification of {path.name} settings file, updating {other_path.name}"
-                    )
-                    await self.sync_watched_files(path, other_path)
-                    self.notify_file_changed(change, path)
+                tomli_w.dump(settings, tf)
+        finally:
+            self.sync_file_mtimes(json_path, toml_path)
 
-    async def perform_initial_reconciliation(self):
+    @operation
+    def sync_json_deletion_to_toml(
+        self, json_path: pathlib.Path, toml_path: pathlib.Path
+    ):
+        toml_path.unlink()
+
+    @operation
+    def sync_toml_modification_to_json(
+        self, toml_path: pathlib.Path, json_path: pathlib.Path
+    ):
+        try:
+            # Ensure that the destination exists
+            json_path.parent.mkdir(exist_ok=True, parents=True)
+
+            with open(toml_path, "rb") as sf, open(json_path, "w") as tf:
+                settings = self.pre_process_settings(
+                    json_path, self.prepare_toml_map_for_json(tomli.load(sf))
+                )
+                json5.dump(settings, tf, indent=2)
+        finally:
+            self.sync_file_mtimes(toml_path, json_path)
+
+    @operation
+    def sync_toml_deletion_to_json(
+        self, toml_path: pathlib.Path, json_path: pathlib.Path
+    ):
+        json_path.unlink()
+
+    def reconcile_json_change(self, json_path: pathlib.Path, fs_event: FileSystemEvent):
+        toml_path = self.json_to_toml_path(json_path)
+        if fs_event == FileSystemEvent.modified and self.file_is_newer(
+            json_path, toml_path
+        ):
+            self.sync_json_modification_to_toml(json_path, toml_path)
+        elif fs_event == FileSystemEvent.deleted and toml_path.exists():
+            self.sync_json_deletion_to_toml(json_path, toml_path)
+
+    def reconcile_toml_change(self, toml_path: pathlib.Path, fs_event: FileSystemEvent):
+        json_path = self.toml_to_json_path(toml_path)
+        if fs_event == FileSystemEvent.modified and self.file_is_newer(
+            toml_path, json_path
+        ):
+            success = self.sync_toml_modification_to_json(toml_path, json_path)
+        elif fs_event == FileSystemEvent.deleted and json_path.exists():
+            success = self.sync_toml_deletion_to_json(toml_path, json_path)
+        else:
+            return
+        if success:
+            self.notify_toml_changed(toml_path, fs_event)
+
+    def perform_initial_reconciliation(self):
         """
         Reconcile existing files. No files will be deleted.
         """
+        expected_toml_paths = set()
 
-        async def reconcile(dir_path):
-            for entry in await aiofiles.os.scandir(dir_path):
-                entry_path = pathlib.Path(entry.path)
-                # Ignored directories/files should be skipped
-                if any(
-                    fnmatch.fnmatch(entry_path.name, p) for p in self.ignore_patterns
-                ):
+        # Reconcile JSON files with TOML
+        for root, dir_names, file_names in self.source_path.walk():
+            # Ignored directories/files should be skipped
+            if self.name_is_ignored(root.name):
+                continue
+
+            for file_name in file_names:
+                file_path = root / file_name
+                if not self.is_json_path(file_path):
                     continue
 
-                if entry.is_dir():
-                    await reconcile(entry_path)
-                elif (
-                    is_source_path := self.is_json_path(entry_path)
-                ) or self.is_toml_path(entry_path):
-                    other_path = (
-                        self.json_to_toml_path(entry_path)
-                        if is_source_path
-                        else self.toml_to_json_path(entry_path)
-                    )
-                    # Reconcile onto the "other" file if it doesn't exist, or it's older than us
-                    if await self.files_require_sync(entry_path, other_path):
-                        await self.sync_watched_files(entry_path, other_path)
+                # Keep track of expected TOML path
+                toml_path = self.json_to_toml_path(file_path)
+                expected_toml_paths.add(toml_path)
 
-        await reconcile(self.source_path)
-        await reconcile(self.dest_path)
+                # Reconcile as a source(JSON)-driven change
+                self.sync_json_modification_to_toml(file_path, toml_path)
 
-    async def watch_and_reconcile_changes(self):
+        # Remove unexpected TOML files
+        seen_directories = []
+        for root, dir_names, file_names in self.dest_path.walk():
+            seen_directories.append(root)
+            for file_name in file_names:
+                file_path = root / file_name
+                if file_path in expected_toml_paths:
+                    continue
+                # Reconcile as a source(JSON)-driven change
+                json_path = self.toml_to_json_path(file_path)
+                self.sync_json_deletion_to_toml(json_path, file_path)
+
+        # Remove empty TOML directories
+        seen_directories.sort(key=lambda p: len(p.parts), reverse=True)
+        for path in seen_directories:
+            try:
+                next(path.iterdir())
+            except StopIteration:
+                path.rmdir()
+
+    async def iter_changed_files(self):
         async for changes in watchfiles.awatch(
             self.source_path,
             self.dest_path,
             stop_event=self._event,
-            watch_filter=self.change_might_require_sync,
+            watch_filter=lambda change, path: self.path_is_tracked(path),
         ):
-            for change, _change_path in changes:
-                change_path = pathlib.Path(_change_path)
-                await self.reconcile_change(change, change_path)
+            for change, _path in changes:
+                path = pathlib.Path(_path)
+                event = (
+                    FileSystemEvent.deleted
+                    if change == watchfiles.Change.deleted
+                    else FileSystemEvent.modified
+                )
+                yield (path, event)
+
+    async def watch_and_reconcile_changes(self):
+        async for path, event in self.iter_changed_files():
+            if self.is_json_path(path):
+                self.reconcile_json_change(path, event)
+            else:
+                self.reconcile_toml_change(path, event)
 
     async def event_loop(self):
         try:
-            await self.perform_initial_reconciliation()
+            self.perform_initial_reconciliation()
             if self.watch_for_changes:
                 await self.watch_and_reconcile_changes()
         except Exception:
