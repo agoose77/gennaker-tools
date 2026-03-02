@@ -67,7 +67,6 @@ class SettingsSyncApp(ExtensionApp):
 
     _task = Instance(asyncio.Task, allow_none=True)
     _event = Instance(asyncio.Event, allow_none=True)
-    _notifiers = List()
 
     @default("dest_path")
     def _default_dest_path(self):
