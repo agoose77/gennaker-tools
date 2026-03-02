@@ -28,7 +28,7 @@ function createWebSocket(serverSettings: ServerConnection.ISettings) {
 
   ws.onmessage = event => {
     const data = JSON.parse(event.data);
-    console.log(`Data received from ${END_POINT}:`, data);
+    console.debug(`Data received from ${END_POINT}:`, data);
   };
 
   ws.onerror = error => {
