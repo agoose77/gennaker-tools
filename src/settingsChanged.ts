@@ -59,8 +59,8 @@ export const settingsChangedPlugin: JupyterFrontEndPlugin<void> = {
     const serverSettings = app.serviceManager.serverSettings;
 
     const ws = createWebSocket(serverSettings);
-    console.log({ ws });
     ws.onmessage = event => {
+      console.log(event);
       const data = JSON.parse(event.data);
       if (data.file_type !== 'toml') {
         // We don't care about JSON-to-TOML sync — TOML files aren't read by JupyterLab
