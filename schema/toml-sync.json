@@ -1,0 +1,21 @@
+{
+  "title": "TOML Sync",
+  "description": "Settings of the TOML settings sync.",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "title": "Enable notifications",
+      "description": "Show a notification or pop-up when a TOML settings file is updated.",
+      "default": true
+    },
+    "style": {
+      "type": "string",
+      "enum": ["notification", "alert"],
+      "title": "Notification style",
+      "description": "Show a pop-up or alert when a TOML settings file change is detected.",
+      "default": "notification"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}
