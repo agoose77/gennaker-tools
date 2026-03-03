@@ -44,7 +44,9 @@ def operation(func):
             )
             return False
         else:
-            self.log.info(f"Synchronising {source.name} onto {dest.name}")
+            self.log.info(
+                f"Synchronising {source.name} ({source.parent.name}) onto {dest.name}"
+            )
             return True
 
     return wrapper
@@ -177,7 +179,9 @@ class SettingsSyncApp(ExtensionApp):
         self, source_path: pathlib.Path, reference_path: pathlib.Path
     ) -> bool:
 
-        return source_path.stat().st_mtime > reference_path.stat().st_mtime
+        return (not reference_path.exists()) or (
+            source_path.stat().st_mtime > reference_path.stat().st_mtime
+        )
 
     def sync_file_mtimes(self, source_path: pathlib.Path, target_path: pathlib.Path):
         stat = source_path.stat()
@@ -197,6 +201,7 @@ class SettingsSyncApp(ExtensionApp):
                     json_path, self.prepare_json_map_for_toml(json5.load(sf))
                 )
                 tomli_w.dump(settings, tf)
+                tf.flush()
         finally:
             self.sync_file_mtimes(json_path, toml_path)
 
@@ -219,6 +224,7 @@ class SettingsSyncApp(ExtensionApp):
                     json_path, self.prepare_toml_map_for_json(tomli.load(sf))
                 )
                 json5.dump(settings, tf, indent=2)
+                tf.flush()
         finally:
             self.sync_file_mtimes(toml_path, json_path)
 
