@@ -91,18 +91,16 @@ export const tomlSyncPlugin: JupyterFrontEndPlugin<void> = {
     const ws = createWebSocket(serverSettings);
     ws.onmessage = event => {
       console.log(event);
-      const data = JSON.parse(event.data);
-      if (data.file_type !== 'toml') {
-        // We don't care about JSON-to-TOML sync — TOML files aren't read by JupyterLab
-        return;
-      }
+      // const data = JSON.parse(event.data);
       if (!enabled) {
         console.debug('Notifications are disabled for settings sync');
         return;
       }
+      const message =
+        'A change was detected to a settings file. This might require a reload of JupyterLab. Reloading will lose any unsaved changes on your page.';
       switch (style) {
         case 'notification': {
-          Notification.warning('Settings file change changed.', {
+          Notification.warning(message, {
             actions: [
               {
                 label: 'Reload',
@@ -120,7 +118,7 @@ export const tomlSyncPlugin: JupyterFrontEndPlugin<void> = {
         case 'alert': {
           showDialog({
             title: 'Settings file change changed',
-            body: `A change was detected to ${data.file_path}. This might require a reload of JupyterLab. Reloading will lose any unsaved changes on your page.`,
+            body: message,
             buttons: [
               Dialog.cancelButton({ label: 'Ignore' }),
               Dialog.okButton({ label: 'Reload' })

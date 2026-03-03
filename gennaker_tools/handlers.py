@@ -36,12 +36,12 @@ class SettingsChangedHandler(JupyterHandler, websocket.WebSocketHandler):
     async def on_message(self, message):
         self.log.debug("Received message from frontend")
 
-    def on_settings_changed(self, file_path, change, file_type):
+    def notify_toml_changed(self, file_path, event):
         root = self.serverapp.root_dir
         try:
             file_path_to_root = file_path.relative_to(root)
         except ValueError:
-            self.log.debug("Could not compute notebook-relative path for {file_path}")
+            self.log.debug("Could not compute root-relative path for {file_path}")
             file_path_to_root = None
 
         self.write_message(
@@ -49,9 +49,8 @@ class SettingsChangedHandler(JupyterHandler, websocket.WebSocketHandler):
                 {
                     # I think NB file paths are all POSIX
                     "file_path": file_path_to_root.as_posix(),
-                    "change": change,
+                    "change": str(event),
                     "fs_file_path": os.fspath(file_path),
-                    "file_type": file_type,
                 }
             )
         )
