@@ -307,8 +307,19 @@ class SettingsSyncApp(ExtensionApp):
             stop_event=self._event,
             watch_filter=lambda change, path: self.path_is_tracked(path),
         ):
-            for change, _path in changes:
-                path = pathlib.Path(_path)
+            it_changes = iter((c, pathlib.Path(p)) for c, p in changes)
+            for change, path in it_changes:
+                # Catch delete-recreate modification strategy
+                if change == watchfiles.Change.deleted and path.exists():
+                    next_change, next_path = next(it_changes)
+                    assert next_path == path
+                    assert next_change == watchfiles.Change.added
+
+                    change = watchfiles.Change.modified
+                    self.log.debug(
+                        f"Rewriting delete-then-create as modification: {path}"
+                    )
+
                 event = (
                     FileSystemEvent.deleted
                     if change == watchfiles.Change.deleted
