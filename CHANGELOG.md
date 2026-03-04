@@ -2,6 +2,30 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.8.0
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.7.0...c1c6b55c6a1d418929c7b5c801a93ceb62d7d310))
+
+### Enhancements made
+
+- refactor: rework core logic [#33](https://github.com/agoose77/gennaker-tools/pull/33) ([@agoose77](https://github.com/agoose77))
+
+### Bugs fixed
+
+- fix: wierd delete-then-create [#35](https://github.com/agoose77/gennaker-tools/pull/35) ([@agoose77](https://github.com/agoose77))
+- fix: handle race conditions [#34](https://github.com/agoose77/gennaker-tools/pull/34) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-03-03&to=2026-03-03&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-03-03..2026-03-03&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.7.0
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.6.0...cb29d67e236e183c8cfdfea839979da44763e427))
@@ -18,8 +42,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-03-02&to=2026-03-03&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-03-02..2026-03-03&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.6.0
 
