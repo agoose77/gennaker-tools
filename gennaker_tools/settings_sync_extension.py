@@ -196,10 +196,11 @@ class SettingsSyncApp(ExtensionApp):
             # Ensure that the destination exists
             toml_path.parent.mkdir(exist_ok=True, parents=True)
 
-            with open(json_path, "rb") as sf, open(toml_path, "wb") as tf:
+            with open(json_path, "rb") as sf:
                 settings = self.pre_process_settings(
                     json_path, self.prepare_json_map_for_toml(json5.load(sf))
                 )
+            with open(toml_path, "wb") as tf:
                 tomli_w.dump(settings, tf)
                 tf.flush()
         finally:
@@ -219,10 +220,11 @@ class SettingsSyncApp(ExtensionApp):
             # Ensure that the destination exists
             json_path.parent.mkdir(exist_ok=True, parents=True)
 
-            with open(toml_path, "rb") as sf, open(json_path, "w") as tf:
+            with open(toml_path, "rb") as sf:
                 settings = self.pre_process_settings(
                     json_path, self.prepare_toml_map_for_json(tomli.load(sf))
                 )
+            with open(json_path, "w") as tf:
                 json5.dump(settings, tf, indent=2)
                 tf.flush()
         finally:
