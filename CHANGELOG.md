@@ -2,6 +2,31 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.8.2
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.8.1...c0abeaefb203f62026123cb021d7599792c6a1db))
+
+### Bugs fixed
+
+- update error messages for snippets error [#40](https://github.com/agoose77/gennaker-tools/pull/40) ([@pascargr](https://github.com/pascargr))
+- fix: validate schema for snippets [#39](https://github.com/agoose77/gennaker-tools/pull/39) ([@agoose77](https://github.com/agoose77))
+
+### Maintenance and upkeep improvements
+
+- deps: Update actions/download-artifact action to v8 [#38](https://github.com/agoose77/gennaker-tools/pull/38) ()
+- deps: Update actions/upload-artifact action to v7 [#37](https://github.com/agoose77/gennaker-tools/pull/37) ()
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-03-09&to=2026-04-30&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-03-09..2026-04-30&type=Issues)) | @pascargr ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Apascargr+updated%3A2026-03-09..2026-04-30&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.8.1
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.8.0...9eda707d65f581193674f9b541781fc806a31edd))
@@ -18,8 +43,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-03-04&to=2026-03-09&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-03-04..2026-03-09&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.8.0
 
