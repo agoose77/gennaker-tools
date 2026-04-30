@@ -12,6 +12,7 @@ import {
   completeFromList
 } from '@codemirror/autocomplete';
 import type { Completion } from '@codemirror/autocomplete';
+import Ajv from 'ajv';
 
 type SnippetConfigurationItem = Completion & { body: string };
 type SnippetConfiguration = {
@@ -57,6 +58,21 @@ const SNIPPET_EXTENSION_SCHEMA = {
   type: 'object'
 };
 
+function validateSnippetConfig(config: SnippetConfiguration) {
+  const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
+
+  const validate = ajv.compile(SNIPPET_EXTENSION_SCHEMA);
+
+  if (validate(config)) {
+    return config;
+  } else {
+    console.error('The config was not valid!');
+    return {
+      snippets: []
+    };
+  }
+}
+
 const SNIPPETS_PLUGIN_ID = 'gennaker-tools:snippets';
 export const snippetsPlugin: JupyterFrontEndPlugin<void> = {
   id: SNIPPETS_PLUGIN_ID,
@@ -72,6 +88,8 @@ export const snippetsPlugin: JupyterFrontEndPlugin<void> = {
         factory: () =>
           EditorExtensionRegistry.createConfigurableExtension(
             (config: SnippetConfiguration) => {
+              config = validateSnippetConfig(config);
+
               return autocompletion({
                 override: [
                   completeFromList(
