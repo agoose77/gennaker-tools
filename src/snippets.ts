@@ -66,7 +66,10 @@ function validateSnippetConfig(config: SnippetConfiguration) {
   if (validate(config)) {
     return config;
   } else {
-    console.error('The config was not valid!');
+    console.error('The editor snippet config was not valid!');
+    for (const error of validate.errors!) {
+      console.error(`${error.instancePath}: ${error.message}`);
+    }
     return {
       snippets: []
     };
