@@ -60,7 +60,8 @@
         "@jupyterlab/application": "^4.4.0",
         "@jupyterlab/codemirror": "^4.4.0",
         "@jupyterlab/mainmenu": "^4.4.0",
-        "@jupyterlab/notebook": "^4.4.0"
+        "@jupyterlab/notebook": "^4.4.0",
+        "ajv": "^8.18.0"
     },
     "devDependencies": {
         "@jupyterlab/builder": "^4.2.0",
