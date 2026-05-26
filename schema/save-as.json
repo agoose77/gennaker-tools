@@ -1,0 +1,29 @@
+{
+  "title": "Gennaker Settings",
+  "description": "Gennaker tools settings.",
+  "jupyter.lab.shortcuts": [{
+    "command": "gennaker-tools:save-as", 
+    "keys": ["Accel Shift S"], 
+    "selector": "body"}],
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-file",
+        "items": [
+          {
+            "command": "docmanager:save-as",
+            "rank": 80,
+            "disabled": true
+          },
+          {
+            "command": "gennaker-tools:save-as",
+            "rank": 5,
+            "disabled": false
+          }
+        ]
+      }
+    ]
+  },
+  "additionalProperties": false,
+  "type": "object"
+}
