@@ -11,7 +11,6 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import type { Contents } from '@jupyterlab/services';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { DocumentRegistry } from '@jupyterlab/docregistry';
-import { writeStructsFromTransaction } from 'yjs/dist/src/internals';
 
 namespace Private {
   /**
