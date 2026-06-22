@@ -4,7 +4,13 @@ import { statelessRunPlugin } from './statelessRun.js';
 import { tomlSyncPlugin } from './tomlSync.js';
 import { saveAsPlugin } from './saveAs.js';
 
-export { snippetsPlugin, statelessRunPlugin, reloadPlugin, tomlSyncPlugin, saveAsPlugin };
+export {
+  snippetsPlugin,
+  statelessRunPlugin,
+  reloadPlugin,
+  tomlSyncPlugin,
+  saveAsPlugin
+};
 export default [
   statelessRunPlugin,
   reloadPlugin,

@@ -26,7 +26,6 @@ export const statelessRunPlugin: JupyterFrontEndPlugin<void> = {
     const { commands, shell } = app;
 
     console.log('JupyterLab plugin gennaker-tools:stateless-run is activated!');
-    // Add a command
 
     const isEnabled = () => {
       return (
