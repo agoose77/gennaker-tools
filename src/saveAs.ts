@@ -11,6 +11,7 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import type { Contents } from '@jupyterlab/services';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { DocumentRegistry } from '@jupyterlab/docregistry';
+import { writeStructsFromTransaction } from 'yjs/dist/src/internals';
 
 namespace Private {
   /**
@@ -21,6 +22,14 @@ namespace Private {
      * Construct a new save widget.
      */
     constructor(path: string) {
+      /**
+       * Create the node for a save widget.
+       */
+      const createSaveNode = (path: string) => {
+        const input = document.createElement('input');
+        input.value = path;
+        return input;
+      };
       super({ node: createSaveNode(path) });
     }
 
@@ -30,15 +39,6 @@ namespace Private {
     getValue(): string {
       return (this.node as HTMLInputElement).value;
     }
-  }
-
-  /**
-   * Create the node for a save widget.
-   */
-  function createSaveNode(path: string): HTMLElement {
-    const input = document.createElement('input');
-    input.value = path;
-    return input;
   }
 
   /**
