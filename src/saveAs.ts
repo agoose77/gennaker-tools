@@ -116,7 +116,8 @@ namespace Private {
     // Let's ensure that the writable path exists!
     try {
       await contents.get(path, {
-        content: false
+        content: false,
+        type: 'directory'
       });
     } catch (err: any) {
       // Error during fetching
