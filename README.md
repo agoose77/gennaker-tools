@@ -82,7 +82,7 @@ The `jlpm` command is JupyterLab's pinned version of
 # Install package in development mode
 pip install -e "."
 # Link your development version of the extension with JupyterLab
-jupyter labextension develop . --overwrite
+jupyter-builder develop . --overwrite
 # Rebuild extension Typescript source after making changes
 jlpm build
 ```
@@ -110,8 +110,8 @@ jupyter lab build --minimize=False
 pip uninstall gennaker-tools
 ```
 
-In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
-command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
+In development mode, you will also need to remove the symlink created by `jupyter-builder develop`
+command. To find its location, you can run `jupyter-builder list` to figure out where the `labextensions`
 folder is located. Then you can remove the symlink named `gennaker-tools` within that folder.
 
 ### Packaging the extension
