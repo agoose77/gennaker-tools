@@ -1,10 +1,13 @@
 {
   "title": "Gennaker Settings",
   "description": "Gennaker tools settings.",
-  "jupyter.lab.shortcuts": [{
-    "command": "gennaker-tools:save-as", 
-    "keys": ["Accel Shift S"], 
-    "selector": "body"}],
+  "jupyter.lab.shortcuts": [
+    {
+      "command": "gennaker-tools:save-as",
+      "keys": ["Accel Shift S"],
+      "selector": "body"
+    }
+  ],
   "jupyter.lab.menus": {
     "main": [
       {
