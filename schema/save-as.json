@@ -1,13 +1,7 @@
 {
   "title": "Gennaker Settings",
   "description": "Gennaker tools settings.",
-  "jupyter.lab.shortcuts": [
-    {
-      "command": "gennaker-tools:save-as",
-      "keys": ["Accel Shift S"],
-      "selector": "body"
-    }
-  ],
+  "jupyter.lab.shortcuts": [],
   "jupyter.lab.menus": {
     "main": [
       {
@@ -26,6 +20,15 @@
         ]
       }
     ]
+  },
+  "properties": {
+    "writablePath": {
+      "type": "string",
+      "title": "Where to write files",
+      "description": "Where to write files when the original directory is read-only",
+      "default": "Files",
+      "pattern": "^[^/]+$"
+    }
   },
   "additionalProperties": false,
   "type": "object"
