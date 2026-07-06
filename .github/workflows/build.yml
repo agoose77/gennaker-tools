@@ -21,14 +21,17 @@ jobs:
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install dependencies
         run: python -m pip install -U "jupyterlab>=4.0.0,<5"
 
       - name: Lint the extension
         run: |
           set -eux
-          jlpm
-          jlpm run lint:check
+          pnpm ci
+          pnpm run lint:check
 
       - name: Build the extension
         run: |
