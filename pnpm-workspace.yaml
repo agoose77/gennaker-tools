@@ -1,0 +1,5 @@
+allowBuilds:
+  '@fortawesome/fontawesome-free': true
+## 43200 minutes = 30 days
+## 25200 minutes = 2.5 weeks
+minimumReleaseAge: 25200
