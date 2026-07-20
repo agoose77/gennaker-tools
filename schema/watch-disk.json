@@ -1,0 +1,20 @@
+{
+  "title": "Watch Disk",
+  "description": "Settings of the watch disk extension.",
+  "properties": {
+    "autoReload": {
+      "type": "boolean",
+      "title": "Enable automatic file reloading.",
+      "description": "Automatically reload a file when it is changed externally.",
+      "default": true
+    },
+    "reloadInterval": {
+      "type": "number",
+      "title": "Set reload period in milliseconds.",
+      "description": "The interval in ms between checking the modification time of open files.",
+      "default": true
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}
