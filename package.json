@@ -73,18 +73,20 @@
         "ajv": "^8.18.0"
     },
     "devDependencies": {
+        "@eslint/compat": "^2.1.0",
+        "@eslint/js": "^9.0.0",
         "@jupyter/builder": "^1.0.0",
+        "@jupyter/eslint-plugin": "^0.0.5",
         "@jupyterlab/core-meta": "^4.6.0",
         "@module-federation/runtime-tools": "^2.0.0",
         "@types/json-schema": "latest",
         "@types/react": "latest",
         "@types/react-addons-linked-state-mixin": "latest",
-        "@typescript-eslint/eslint-plugin": "latest",
-        "@typescript-eslint/parser": "latest",
         "css-loader": "^6.7.1",
-        "eslint": "^8.36.0",
-        "eslint-config-prettier": "^8.8.0",
+        "eslint": "^9.0.0",
+        "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-prettier": "^5.0.0",
+        "globals": "^15.0.0",
         "npm-run-all2": "^7.0.1",
         "prettier": "^3.0.0",
         "rimraf": "^5.0.1",
@@ -96,6 +98,7 @@
         "stylelint-csstree-validator": "^3.0.0",
         "stylelint-prettier": "^4.0.0",
         "typescript": "~5.5.4",
+        "typescript-eslint": "^8.0.0",
         "yjs": "^13.5.0"
     },
     "sideEffects": [
@@ -110,66 +113,6 @@
         "extension": true,
         "outputDir": "gennaker_tools/labextension",
         "schemaDir": "schema"
-    },
-    "eslintIgnore": [
-        "node_modules",
-        "dist",
-        "coverage",
-        "**/*.d.ts"
-    ],
-    "eslintConfig": {
-        "extends": [
-            "eslint:recommended",
-            "plugin:@typescript-eslint/eslint-recommended",
-            "plugin:@typescript-eslint/recommended",
-            "plugin:prettier/recommended"
-        ],
-        "parser": "@typescript-eslint/parser",
-        "parserOptions": {
-            "project": "tsconfig.json",
-            "sourceType": "module"
-        },
-        "plugins": [
-            "@typescript-eslint"
-        ],
-        "rules": {
-            "@typescript-eslint/naming-convention": [
-                "error",
-                {
-                    "selector": "interface",
-                    "format": [
-                        "PascalCase"
-                    ],
-                    "custom": {
-                        "regex": "^I[A-Z]",
-                        "match": true
-                    }
-                }
-            ],
-            "@typescript-eslint/no-unused-vars": [
-                "warn",
-                {
-                    "args": "none"
-                }
-            ],
-            "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-namespace": "off",
-            "@typescript-eslint/no-use-before-define": "off",
-            "@typescript-eslint/quotes": [
-                "error",
-                "single",
-                {
-                    "avoidEscape": true,
-                    "allowTemplateLiterals": false
-                }
-            ],
-            "curly": [
-                "error",
-                "all"
-            ],
-            "eqeqeq": "error",
-            "prefer-arrow-callback": "error"
-        }
     },
     "prettier": {
         "singleQuote": true,

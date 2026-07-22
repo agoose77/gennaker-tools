@@ -36,9 +36,22 @@ export const statelessRunPlugin: JupyterFrontEndPlugin<void> = {
     };
 
     commands.addCommand(CommandIDs.restartRunStateless, {
-      label: 'Restart Kernel, Clear Outputs, and Run All Above Selected Cell',
-      caption:
-        'Clear all outputs, restart kernel, and run all cells above the selected cell',
+      label: trans.__(
+        'Restart Kernel, Clear Outputs, and Run All Above Selected Cell'
+      ),
+      caption: trans.__(
+        'Clear all outputs, restart kernel, and run all cells above the selected cell'
+      ),
+      describedBy: {
+        args: {
+          type: 'object',
+          properties: {
+            origin: {
+              type: 'string'
+            }
+          }
+        }
+      },
       isEnabled,
       execute: async (args: any) => {
         const orig = args['origin'];

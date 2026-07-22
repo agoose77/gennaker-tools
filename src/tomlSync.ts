@@ -6,6 +6,7 @@ import { showDialog, Dialog, Notification } from '@jupyterlab/apputils';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
+import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { CommandIDs } from './tokens.js';
 
 const NAMESPACE = 'gennaker-tools';
@@ -53,8 +54,15 @@ export const tomlSyncPlugin: JupyterFrontEndPlugin<void> = {
     'A JupyterLab extension for synchronising TOML files with JupyterLab settings.',
   autoStart: true,
   requires: [ISettingRegistry],
-  activate: (app: JupyterFrontEnd, settings: ISettingRegistry) => {
+  optional: [ITranslator],
+
+  activate: (
+    app: JupyterFrontEnd,
+    settings: ISettingRegistry,
+    translator: ITranslator | null
+  ) => {
     console.log('JupyterLab plugin gennaker-tools:toml-sync is activated!');
+    const trans = (translator ?? nullTranslator).load('jupyterlab');
 
     const { commands } = app;
     const serverSettings = app.serviceManager.serverSettings;
@@ -117,11 +125,11 @@ export const tomlSyncPlugin: JupyterFrontEndPlugin<void> = {
         }
         case 'alert': {
           showDialog({
-            title: 'Settings file change changed',
+            title: trans.__('Settings file change changed'),
             body: message,
             buttons: [
-              Dialog.cancelButton({ label: 'Ignore' }),
-              Dialog.okButton({ label: 'Reload' })
+              Dialog.cancelButton({ label: trans.__('Ignore') }),
+              Dialog.okButton({ label: trans.__('Reload') })
             ],
             defaultButton: 0
           })
