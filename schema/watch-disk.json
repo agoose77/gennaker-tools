@@ -12,7 +12,7 @@
       "type": "number",
       "title": "Set reload period in milliseconds.",
       "description": "The interval in ms between checking the modification time of open files.",
-      "default": true
+      "default": 1000
     }
   },
   "additionalProperties": false,
