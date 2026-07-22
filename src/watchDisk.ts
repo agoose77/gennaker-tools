@@ -118,7 +118,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
           knownTimestamps.set(context.path, diskModel.last_modified);
 
           if (autoReload && !isDirty) {
-            await commands.execute('docmanager:reload');
+            context.revert();
           } else {
             const message =
               'A change to the file on disk has been made externally. Refresh to load change. Note that all unsaved work will be overwritten.';
