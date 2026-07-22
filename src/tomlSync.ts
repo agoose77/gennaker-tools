@@ -7,11 +7,6 @@ import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { CommandIDs } from './tokens.js';
-import { ILabShell } from '@jupyterlab/application';
-import { IDocumentManager } from '@jupyterlab/docmanager';
-import { IContentsManager } from '@jupyterlab/services';
-import type { Contents } from '@jupyterlab/services';
-
 
 const NAMESPACE = 'gennaker-tools';
 const END_POINT = 'settings-changed';
@@ -57,55 +52,9 @@ export const tomlSyncPlugin: JupyterFrontEndPlugin<void> = {
   description:
     'A JupyterLab extension for synchronising TOML files with JupyterLab settings.',
   autoStart: true,
-  requires: [ISettingRegistry, ILabShell, IDocumentManager, IContentsManager],
-  activate: (app: JupyterFrontEnd, settings: ISettingRegistry, labShell: ILabShell, docManager: IDocumentManager, contents: Contents.IManager) => {
+  requires: [ISettingRegistry],
+  activate: (app: JupyterFrontEnd, settings: ISettingRegistry) => {
     console.log('JupyterLab plugin gennaker-tools:toml-sync is activated!');
-
-    /* testing ILabShell
-     *
-     *
-     * 
-     */
-    const loop = async () => {
-
-      /* get open files in jupyter lab environment (open tabs)*/
-      const widgets = Array.from(labShell.widgets('main'));
-
-      const contexts = widgets.map(
-        (widget) => docManager.contextForWidget(widget)
-      ); 
-
-      /* for each open file, find the time of last modified for the client version and the disk version */
-      for (const context of contexts) {
-        if (context === undefined) {
-          continue;
-        }
-
-        const model = context.contentsModel;
-        if (model === null) {
-          continue;
-        }
-        
-        const diskModel = await contents.get(context.path, {
-          content: false,
-        });
-
-        /* open in VSCode and change file and save, then refresh in jupyter lab and see the different last modified times */
-
-        console.log(model.last_modified);
-        console.log(diskModel.last_modified);
-      }
-
-      setTimeout(loop, 1000);
-    }
-
-    loop();
-
-    /* testing ILabShell above
-     *
-     *
-     * 
-     */
 
     const { commands } = app;
     const serverSettings = app.serviceManager.serverSettings;
