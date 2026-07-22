@@ -95,9 +95,6 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
 
           /* open in VSCode and change file and save, then refresh in jupyter lab and see the different last modified times */
 
-          console.log(jlModel.last_modified);
-          console.log(diskModel.last_modified);
-
           const jlModifiedTime = new Date(jlModel.last_modified);
           const diskModifiedTime = new Date(diskModel.last_modified);
 
@@ -109,7 +106,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
           // then do not do anything
           // (there are no untracked changes on disk)
           if (timeDiff <= diffTolerance) {
-            console.log('No changes detected on disk');
+            console.debug('No changes detected on disk');
             return;
           }
 
