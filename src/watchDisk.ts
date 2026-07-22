@@ -12,7 +12,6 @@ import { IDocumentManager } from '@jupyterlab/docmanager';
 import { IContentsManager } from '@jupyterlab/services';
 import type { Contents } from '@jupyterlab/services';
 
-
 /**
  * Initialization data for the gennaker-tools extension.
  */
@@ -23,7 +22,13 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
     'A JupyterLab extension for watching edits to open files saved on disk.',
   autoStart: true,
   requires: [ISettingRegistry, ILabShell, IDocumentManager, IContentsManager],
-  activate: (app: JupyterFrontEnd, settings: ISettingRegistry, labShell: ILabShell, docManager: IDocumentManager, contents: Contents.IManager) => {
+  activate: (
+    app: JupyterFrontEnd,
+    settings: ISettingRegistry,
+    labShell: ILabShell,
+    docManager: IDocumentManager,
+    contents: Contents.IManager
+  ) => {
     console.log('JupyterLab plugin gennaker-tools:watch-disk is activated!');
 
     const { commands } = app;
@@ -67,8 +72,8 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
         /* get open files in jupyter lab environment (open tabs)*/
         const widgets = Array.from(labShell.widgets('main'));
 
-        const contexts = widgets.map(
-          (widget) => docManager.contextForWidget(widget)
+        const contexts = widgets.map(widget =>
+          docManager.contextForWidget(widget)
         );
 
         /* for each open file, find the time of last modified for the client version and the disk version */
@@ -85,7 +90,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
           }
 
           const diskModel = await contents.get(context.path, {
-            content: false,
+            content: false
           });
 
           /* open in VSCode and change file and save, then refresh in jupyter lab and see the different last modified times */
@@ -96,14 +101,15 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
           const jlModifiedTime = new Date(jlModel.last_modified);
           const diskModifiedTime = new Date(diskModel.last_modified);
 
-          const timeDiff = diskModifiedTime.getTime() - jlModifiedTime.getTime();
+          const timeDiff =
+            diskModifiedTime.getTime() - jlModifiedTime.getTime();
           const diffTolerance = 500;
 
           // if the difference between the disk model and jupyter lab model is the same (or within the tolerance)
-          // then do not do anything 
+          // then do not do anything
           // (there are no untracked changes on disk)
           if (timeDiff <= diffTolerance) {
-            console.log("No changes detected on disk")
+            console.log('No changes detected on disk');
             return;
           }
 
@@ -114,14 +120,14 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
             return;
           }
 
-          // set the timestamp for the file as current time 
+          // set the timestamp for the file as current time
           knownTimestamps.set(context.path, diskModel.last_modified);
 
           if (autoReload && !isDirty) {
             await commands.execute('docmanager:reload');
-          }
-          else {
-            const message = "A change to the file on disk has been made externally. Refresh to load change. Note that all unsaved work will be overwritten.";
+          } else {
+            const message =
+              'A change to the file on disk has been made externally. Refresh to load change. Note that all unsaved work will be overwritten.';
             const result = await showDialog({
               title: 'File changed externally',
               body: message,
@@ -130,7 +136,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
                 Dialog.okButton({ label: 'Reload' })
               ],
               defaultButton: 0
-            })
+            });
             if (result.button.accept) {
               await commands.execute('docmanager:reload');
             } else {
@@ -138,14 +144,12 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
             }
           }
         }
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
-      }
-      finally {
+      } finally {
         setTimeout(loop, reloadInterval);
       }
-    }
+    };
     loop();
   }
-}
+};
