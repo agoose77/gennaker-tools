@@ -26,9 +26,19 @@ export const reloadPlugin: JupyterFrontEndPlugin<void> = {
     const trans = (translator ?? nullTranslator).load('jupyterlab');
 
     commands.addCommand(CommandIDs.resetJupyterLab, {
-      label: 'Reset JupyterLab',
-      caption: 'Reset JupyterLab',
+      label: trans.__('Reset JupyterLab'),
+      caption: trans.__('Reset JupyterLab'),
       isEnabled: () => true,
+      describedBy: {
+        args: {
+          type: 'object',
+          properties: {
+            origin: {
+              type: 'string'
+            }
+          }
+        }
+      },
       execute: (args: any) => {
         const orig = args['origin'];
         if (orig !== 'init') {

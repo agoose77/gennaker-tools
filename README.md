@@ -8,6 +8,7 @@ A series of JupyterLab and Jupyter Server extensions to power the gennaker proje
 
 ### TOML ←→ JSON Settings Sync
 
+r
 <img width="1130" height="900" alt="image" src="https://github.com/user-attachments/assets/c9babdd6-d247-45a1-a590-f17165f5b7fb" />
 
 _Synchronise between JSON and TOML representations of settings under the JupyterLab settings path._

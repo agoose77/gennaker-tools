@@ -73,17 +73,17 @@
         "ajv": "^8.18.0"
     },
     "devDependencies": {
+        "@eslint/compat": "^2.1.0",
+        "@eslint/js": "^9.0.0",
         "@jupyter/builder": "^1.0.0",
-        "@jupyterlab/core-meta": "^4.6.0",
         "@jupyter/eslint-plugin": "^0.0.5",
+        "@jupyterlab/core-meta": "^4.6.0",
         "@module-federation/runtime-tools": "^2.0.0",
         "@types/json-schema": "latest",
         "@types/react": "latest",
         "@types/react-addons-linked-state-mixin": "latest",
-        "typescript-eslint": "^8.0.0",
         "css-loader": "^6.7.1",
         "eslint": "^9.0.0",
-        "@eslint/js": "^9.0.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-prettier": "^5.0.0",
         "npm-run-all2": "^7.0.1",
@@ -97,6 +97,7 @@
         "stylelint-csstree-validator": "^3.0.0",
         "stylelint-prettier": "^4.0.0",
         "typescript": "~5.5.4",
+        "typescript-eslint": "^8.0.0",
         "yjs": "^13.5.0"
     },
     "sideEffects": [

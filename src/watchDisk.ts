@@ -11,6 +11,7 @@ import { ILabShell } from '@jupyterlab/application';
 import { IDocumentManager } from '@jupyterlab/docmanager';
 import { IContentsManager } from '@jupyterlab/services';
 import type { Contents } from '@jupyterlab/services';
+import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 
 /**
  * Initialization data for the gennaker-tools extension.
@@ -22,14 +23,17 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
     'A JupyterLab extension for watching edits to open files saved on disk.',
   autoStart: true,
   requires: [ISettingRegistry, ILabShell, IDocumentManager, IContentsManager],
+  optional: [ITranslator],
   activate: (
     app: JupyterFrontEnd,
     settings: ISettingRegistry,
     labShell: ILabShell,
     docManager: IDocumentManager,
-    contents: Contents.IManager
+    contents: Contents.IManager,
+    translator: ITranslator | null
   ) => {
     console.log('JupyterLab plugin gennaker-tools:watch-disk is activated!');
+    const trans = (translator ?? nullTranslator).load('jupyterlab');
 
     const { commands } = app;
 
@@ -123,11 +127,11 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
             const message =
               'A change to the file on disk has been made externally. Refresh to load change. Note that all unsaved work will be overwritten.';
             const result = await showDialog({
-              title: 'File changed externally',
+              title: trans.__('File changed externally'),
               body: message,
               buttons: [
-                Dialog.cancelButton({ label: 'Ignore' }),
-                Dialog.okButton({ label: 'Reload' })
+                Dialog.cancelButton({ label: trans.__('Ignore') }),
+                Dialog.okButton({ label: trans.__('Reload') })
               ],
               defaultButton: 0
             });

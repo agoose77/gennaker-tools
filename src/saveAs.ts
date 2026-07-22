@@ -190,7 +190,7 @@ export const saveAsPlugin: JupyterFrontEndPlugin<void> = {
           'Save %1 As…',
           Private.fileType(shell.currentWidget, docManager)
         ),
-      caption: 'Save with new path',
+      caption: trans.__('Save with new path'),
       isEnabled,
       describedBy: {
         args: {
