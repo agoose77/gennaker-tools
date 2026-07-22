@@ -70,15 +70,11 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
     const loop = async () => {
       try {
         /* get open files in jupyter lab environment (open tabs)*/
-        const widgets = Array.from(labShell.widgets('main'));
-
-        const contexts = widgets.map(widget =>
-          docManager.contextForWidget(widget)
-        );
-
         /* for each open file, find the time of last modified for the client version and the disk version */
-        for (const context of contexts) {
+        for (const widget of labShell.widgets('main')) {
+          const context = docManager.contextForWidget(widget);
           if (context === undefined) {
+            console.warn(`No context for widget: ${widget.title}`);
             continue;
           }
 
@@ -86,6 +82,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
 
           const jlModel = context.contentsModel;
           if (jlModel === null) {
+            console.warn(`No model for context: ${context.path}`);
             continue;
           }
 
