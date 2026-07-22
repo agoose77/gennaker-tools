@@ -107,14 +107,14 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
           // (there are no untracked changes on disk)
           if (timeDiff <= diffTolerance) {
             console.debug('No changes detected on disk');
-            return;
+            continue;
           }
 
           // get the last saved timestamp for the given file (that the user is aware of)
           // if the file has not been updated since the last timestamp, do nothing
           const knownTime = knownTimestamps.get(context.path);
           if (knownTime === diskModel.last_modified) {
-            return;
+            continue;
           }
 
           // set the timestamp for the file as current time
