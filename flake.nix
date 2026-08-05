@@ -29,7 +29,6 @@
       venvHook =
         dev-python.packages.${system}.nix-ld-venv-hook.override
         {python = python;};
-      manyLinux = pkgs.pythonManylinuxPackages.manylinux2014;
       node = pkgs.nodejs_24;
       packages =
         [
@@ -42,6 +41,7 @@
           ninja
           gcc
           pre-commit
+          pnpm
         ]);
       # Unset these unwanted env vars
       # PYTHONPATH bleeds from Nix Python packages

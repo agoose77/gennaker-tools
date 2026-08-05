@@ -59,12 +59,12 @@ class SettingsSyncApp(ExtensionApp):
         (r"gennaker-tools/settings-changed", SettingsChangedHandler),
     ]
 
-    source_path = Union(
+    json_settings_path = Union(
         (Instance(pathlib.Path), Unicode()),
         help="Filepath to the source JSON settings.",
         config=True,
     )
-    dest_path = Union(
+    toml_settings_path = Union(
         (Instance(pathlib.Path), Unicode()),
         help="Filepath to the desination TOML settings.",
         config=True,
@@ -93,16 +93,16 @@ class SettingsSyncApp(ExtensionApp):
     _task = Instance(asyncio.Task, allow_none=True)
     _event = Instance(asyncio.Event, allow_none=True)
 
-    @default("dest_path")
-    def _default_dest_path(self):
-        return self.source_path
+    @default("toml_settings_path")
+    def _default_toml_settings_path(self):
+        return pathlib.Path.cwd() / "toml-settings"
 
-    @default("source_path")
-    def _default_source_path(self):
+    @default("json_settings_path")
+    def _default_json_settings_path(self):
         return pathlib.Path(jupyterlab.commands.get_user_settings_dir())
 
-    @validate("source_path", "dest_path")
-    def _valid_source_path(self, proposal):
+    @validate("json_settings_path", "toml_settings_path")
+    def _valid_json_settings_path(self, proposal):
         try:
             _path = pathlib.Path(proposal["value"]).resolve()
         except TypeError:
@@ -120,7 +120,9 @@ class SettingsSyncApp(ExtensionApp):
 
     def pre_process_settings(self, json_path: pathlib.Path, contents: dict) -> dict:
         if callable(self.settings_changed_hook):
-            return self.settings_changed_hook(self.source_path, json_path, contents)
+            return self.settings_changed_hook(
+                self.json_settings_path, json_path, contents
+            )
         return contents
 
     def prepare_json_map_for_toml(self, mapping: dict) -> dict:
@@ -144,31 +146,31 @@ class SettingsSyncApp(ExtensionApp):
         }
 
     def toml_to_json_path(self, path: pathlib.Path) -> pathlib.Path:
-        sub_path = path.relative_to(self.dest_path)
-        return self.source_path / sub_path.with_suffix(".jupyterlab-settings")
+        sub_path = path.relative_to(self.toml_settings_path)
+        return self.json_settings_path / sub_path.with_suffix(".jupyterlab-settings")
 
     def json_to_toml_path(self, path: pathlib.Path) -> pathlib.Path:
-        sub_path = path.relative_to(self.source_path)
-        return self.dest_path / sub_path.with_suffix(".toml")
+        sub_path = path.relative_to(self.json_settings_path)
+        return self.toml_settings_path / sub_path.with_suffix(".toml")
 
     def is_json_path(self, path: pathlib.Path) -> bool:
         return (
-            path.is_relative_to(self.source_path)
+            path.is_relative_to(self.json_settings_path)
             and path.suffix == ".jupyterlab-settings"
         )
 
     def is_toml_path(self, path: pathlib.Path) -> bool:
-        return path.is_relative_to(self.dest_path) and path.suffix == ".toml"
+        return path.is_relative_to(self.toml_settings_path) and path.suffix == ".toml"
 
     def name_is_ignored(self, name: str) -> bool:
         return any(fnmatch.fnmatch(name, pat) for pat in self.ignore_patterns)
 
     def path_is_tracked(self, path: str) -> bool:
         path = pathlib.Path(path)
-        if path.is_relative_to(self.source_path):
-            sub_path = path.relative_to(self.source_path)
+        if path.is_relative_to(self.json_settings_path):
+            sub_path = path.relative_to(self.json_settings_path)
         else:
-            sub_path = path.relative_to(self.dest_path)
+            sub_path = path.relative_to(self.toml_settings_path)
 
         if any(self.name_is_ignored(part) for part in sub_path.parts):
             return False
@@ -176,15 +178,17 @@ class SettingsSyncApp(ExtensionApp):
         return self.is_toml_path(path) or self.is_json_path(path)
 
     def file_is_newer(
-        self, source_path: pathlib.Path, reference_path: pathlib.Path
+        self, json_settings_path: pathlib.Path, reference_path: pathlib.Path
     ) -> bool:
 
         return (not reference_path.exists()) or (
-            source_path.stat().st_mtime > reference_path.stat().st_mtime
+            json_settings_path.stat().st_mtime > reference_path.stat().st_mtime
         )
 
-    def sync_file_mtimes(self, source_path: pathlib.Path, target_path: pathlib.Path):
-        stat = source_path.stat()
+    def sync_file_mtimes(
+        self, json_settings_path: pathlib.Path, target_path: pathlib.Path
+    ):
+        stat = json_settings_path.stat()
         os.utime(target_path, (stat.st_atime, stat.st_mtime))
 
     # Sync routines ########################
@@ -264,8 +268,12 @@ class SettingsSyncApp(ExtensionApp):
         """
         expected_toml_paths = set()
 
+        # Ensure we have folders
+        self.json_settings_path.mkdir(exist_ok=True)
+        self.toml_settings_path.mkdir(exist_ok=True)
+
         # Reconcile JSON files with TOML
-        for root, dir_names, file_names in self.source_path.walk():
+        for root, dir_names, file_names in self.json_settings_path.walk():
             # Ignored directories/files should be skipped
             if self.name_is_ignored(root.name):
                 continue
@@ -284,7 +292,7 @@ class SettingsSyncApp(ExtensionApp):
 
         # Remove unexpected TOML files
         seen_directories = []
-        for root, dir_names, file_names in self.dest_path.walk():
+        for root, dir_names, file_names in self.toml_settings_path.walk():
             seen_directories.append(root)
             for file_name in file_names:
                 file_path = root / file_name
@@ -297,6 +305,10 @@ class SettingsSyncApp(ExtensionApp):
         # Remove empty TOML directories
         seen_directories.sort(key=lambda p: len(p.parts), reverse=True)
         for path in seen_directories:
+            # Don't remove dest!
+            if path == self.toml_settings_path:
+                continue
+
             try:
                 next(path.iterdir())
             except StopIteration:
@@ -304,8 +316,8 @@ class SettingsSyncApp(ExtensionApp):
 
     async def iter_changed_files(self):
         async for changes in watchfiles.awatch(
-            self.source_path,
-            self.dest_path,
+            self.json_settings_path,
+            self.toml_settings_path,
             stop_event=self._event,
             watch_filter=lambda change, path: self.path_is_tracked(path),
         ):
