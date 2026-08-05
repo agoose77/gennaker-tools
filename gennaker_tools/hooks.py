@@ -16,5 +16,8 @@ def keyboard_shortcuts_hook(json_settings_path, json_path, contents):
 
         if shortcut.get("macKeys") == [""]:
             del shortcut["macKeys"]
+
+        if shortcut.get("keys") == [""]:
+            del shortcut["keys"]
     return contents
 
