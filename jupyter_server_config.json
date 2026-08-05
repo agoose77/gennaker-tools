@@ -1,0 +1,11 @@
+{
+    "ServerApp": {
+        "contents_manager_class": "gennaker_tools.ReadOnlyContentsManager"
+    },
+    "ReadOnlyContentsManager": {
+        "read_only_paths": ["src"]
+    },
+    "SettingsSyncApp": {
+        "settings_changed_hook": "gennaker_tools.hooks.keyboard_shortcuts_hook"
+    }    
+}

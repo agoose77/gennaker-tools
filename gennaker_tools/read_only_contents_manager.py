@@ -40,25 +40,3 @@ class ReadOnlyContentsManager(AsyncLargeFileManager):
         except OSError:
             self.log.error("Failed to check write permissions on %s", os_path)
             return False
-
-c.ServerApp.contents_manager_class = ReadOnlyContentsManager
-c.ReadOnlyContentsManager.read_only_paths = ["src"]
-
-def settings_changed_hook(json_settings_path, json_path, contents):
-    relative_path = json_path.relative_to(json_settings_path)
-    print(relative_path)
-    if relative_path != Path("@jupyterlab", "shortcuts-extension", "shortcuts.jupyterlab-settings"):
-        return contents
-
-    shortcuts = contents['shortcuts']
-    for shortcut in shortcuts:
-        if not shortcut['args']:
-            del shortcut['args']
-
-        if shortcut.get('macKeys') == [""]:
-            del shortcut['macKeys']
-    
-    return contents
-    
-
-c.SettingsSyncApp.settings_changed_hook = settings_changed_hook
