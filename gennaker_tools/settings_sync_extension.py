@@ -1,8 +1,10 @@
 from jupyter_server.extension.application import ExtensionApp
 import jupyterlab.commands
 
+from traitlets.utils.importstring import import_item
 from traitlets import (
     Callable,
+    DottedObjectName,
     Instance,
     default,
     validate,
@@ -83,11 +85,19 @@ class SettingsSyncApp(ExtensionApp):
     watch_for_changes = Bool(
         True, config=True, help="Turn off watcher for settings synchronisation."
     )
-    settings_changed_hook = Callable(
-        None,
-        allow_none=True,
+    settings_changed_hooks = List(
+        Union(
+            [
+                Callable(
+                    None,
+                    allow_none=True,
+                    config=True,
+                    help="Callable hook to invoke if a settings file is changed. This hook will be called with the root JSON settings path, the path to the JSON file (even if the TOML file was changed), and the parsed settings data. The hook must return a new (or mutated) settings object if defined.",
+                ),
+                DottedObjectName(),
+            ]
+        ),
         config=True,
-        help="Callable hook to invoke if a settings file is changed. This hook will be called with the root JSON settings path, the path to the JSON file (even if the TOML file was changed), and the parsed settings data. The hook must return a new (or mutated) settings object if defined.",
     )
 
     _task = Instance(asyncio.Task, allow_none=True)
@@ -100,6 +110,20 @@ class SettingsSyncApp(ExtensionApp):
     @default("json_settings_path")
     def _default_json_settings_path(self):
         return pathlib.Path(jupyterlab.commands.get_user_settings_dir())
+
+    @validate("settings_changed_hooks")
+    def _validate_settings_changed_hook(self, proposal):
+        value = proposal["value"]
+        next_value = []
+        for item in value:
+            if isinstance(item, str):
+                imported = import_item(item)
+                if not callable(imported):
+                    raise TypeError("Hook must be callable")
+                next_value.append(imported)
+            else:
+                next_value.append(item)
+        return next_value
 
     @validate("json_settings_path", "toml_settings_path")
     def _valid_json_settings_path(self, proposal):
@@ -119,10 +143,14 @@ class SettingsSyncApp(ExtensionApp):
             handler.notify_toml_changed(toml_path, fs_event)
 
     def pre_process_settings(self, json_path: pathlib.Path, contents: dict) -> dict:
-        if callable(self.settings_changed_hook):
-            return self.settings_changed_hook(
-                self.json_settings_path, json_path, contents
-            )
+        for hook in self.settings_changed_hooks:
+            try:
+                contents = hook(
+                    self.json_settings_path, json_path, contents
+                )
+            except:
+                self.log.error("An unknown error occured when executing a hook", exc_info=True)
+                continue
         return contents
 
     def prepare_json_map_for_toml(self, mapping: dict) -> dict:

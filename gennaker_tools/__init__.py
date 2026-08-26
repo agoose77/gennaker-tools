@@ -11,6 +11,7 @@ except ImportError:
 
 from .settings_sync_extension import SettingsSyncApp
 
+from .read_only_contents_manager import ReadOnlyContentsManager
 
 def _jupyter_server_extension_points():
     """
