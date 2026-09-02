@@ -2,6 +2,45 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.9.0
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.8.2...735a5157ea92c726999a56e6c648b190001feb19))
+
+### Enhancements made
+
+- create force shutdown plugin [#56](https://github.com/agoose77/gennaker-tools/pull/56) ([@pascargr](https://github.com/pascargr), [@agoose77](https://github.com/agoose77))
+- Shortcut hooks and toml cleaning [#55](https://github.com/agoose77/gennaker-tools/pull/55) ([@pascargr](https://github.com/pascargr), [@agoose77](https://github.com/agoose77))
+- Feat: Reload file changes from external editors [#53](https://github.com/agoose77/gennaker-tools/pull/53) ([@agoose77](https://github.com/agoose77), [@pascargr](https://github.com/pascargr))
+- Round off save function [#48](https://github.com/agoose77/gennaker-tools/pull/48) ([@agoose77](https://github.com/agoose77), [@pascargr](https://github.com/pascargr))
+
+### Maintenance and upkeep improvements
+
+- Fix the tooling for releases [#57](https://github.com/agoose77/gennaker-tools/pull/57) ([@agoose77](https://github.com/agoose77))
+- Move to jupyter-builder [#49](https://github.com/agoose77/gennaker-tools/pull/49) ([@agoose77](https://github.com/agoose77))
+- deps: Update gha (major) [#46](https://github.com/agoose77/gennaker-tools/pull/46) ()
+- deps: Update gha [#45](https://github.com/agoose77/gennaker-tools/pull/45) ()
+- deps: Update actions/create-github-app-token action to v3 [#42](https://github.com/agoose77/gennaker-tools/pull/42) ()
+- deps: Update gha [#41](https://github.com/agoose77/gennaker-tools/pull/41) ()
+
+### Other merged PRs
+
+- Rename traits to clarify purpose [#54](https://github.com/agoose77/gennaker-tools/pull/54) ([@agoose77](https://github.com/agoose77))
+- Drop renovate [#51](https://github.com/agoose77/gennaker-tools/pull/51) ([@agoose77](https://github.com/agoose77))
+- change from jlpm to pnpm [#50](https://github.com/agoose77/gennaker-tools/pull/50) ([@pascargr](https://github.com/pascargr))
+- Add comments to save as code and include jupyter_server_config.py [#44](https://github.com/agoose77/gennaker-tools/pull/44) ([@pascargr](https://github.com/pascargr), [@agoose77](https://github.com/agoose77))
+- working on save as function [#43](https://github.com/agoose77/gennaker-tools/pull/43) ([@pascargr](https://github.com/pascargr))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-04-30&to=2026-09-02&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-04-30..2026-09-02&type=Issues)) | @pascargr ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Apascargr+updated%3A2026-04-30..2026-09-02&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.8.2
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.8.1...c0abeaefb203f62026123cb021d7599792c6a1db))
@@ -24,8 +63,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-03-09&to=2026-04-30&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-03-09..2026-04-30&type=Issues)) | @pascargr ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Apascargr+updated%3A2026-03-09..2026-04-30&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.8.1
 
