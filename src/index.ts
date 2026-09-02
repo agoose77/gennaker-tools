@@ -5,6 +5,7 @@ import { tomlSyncPlugin } from './tomlSync.js';
 import { saveAsPlugin } from './saveAs.js';
 import { watchDiskPlugin } from './watchDisk.js';
 import { shutdownPlugin } from './shutdown.js';
+import { broadcastFilePlugin } from './broadcastFile.js';
 
 export {
   snippetsPlugin,
@@ -13,7 +14,8 @@ export {
   tomlSyncPlugin,
   saveAsPlugin,
   watchDiskPlugin,
-  shutdownPlugin
+  shutdownPlugin,
+  broadcastFilePlugin
 };
 export default [
   statelessRunPlugin,
@@ -22,5 +24,6 @@ export default [
   tomlSyncPlugin,
   saveAsPlugin,
   watchDiskPlugin,
-  shutdownPlugin
+  shutdownPlugin,
+  broadcastFilePlugin
 ];
