@@ -2,6 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.10.0
+
+([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.9.0...836aa28b574b0465d6531e4028baaced0e86ff2c))
+
+### Enhancements made
+
+- Add event listener for tab changes [#58](https://github.com/agoose77/gennaker-tools/pull/58) ([@agoose77](https://github.com/agoose77))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-09-02&to=2026-09-02&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-09-02..2026-09-02&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.9.0
 
 ([Full Changelog](https://github.com/agoose77/gennaker-tools/compare/v0.8.2...735a5157ea92c726999a56e6c648b190001feb19))
@@ -38,8 +57,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/agoose77/gennaker-tools/graphs/contributors?from=2026-04-30&to=2026-09-02&type=c))
 
 @agoose77 ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Aagoose77+updated%3A2026-04-30..2026-09-02&type=Issues)) | @pascargr ([activity](https://github.com/search?q=repo%3Aagoose77%2Fgennaker-tools+involves%3Apascargr+updated%3A2026-04-30..2026-09-02&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.8.2
 
