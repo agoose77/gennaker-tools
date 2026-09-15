@@ -78,7 +78,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
         for (const widget of labShell.widgets('main')) {
           const context = docManager.contextForWidget(widget);
           if (context === undefined) {
-            console.warn(`No context for widget: ${widget.title}`);
+            console.debug(`No context for widget: ${widget.title}`);
             continue;
           }
 
@@ -86,7 +86,7 @@ export const watchDiskPlugin: JupyterFrontEndPlugin<void> = {
 
           const jlModel = context.contentsModel;
           if (jlModel === null) {
-            console.warn(`No model for context: ${context.path}`);
+            console.debug(`No model for context: ${context.path}`);
             continue;
           }
 

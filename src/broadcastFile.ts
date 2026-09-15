@@ -3,7 +3,8 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { IDocumentManager } from '@jupyterlab/docmanager';
-import type { Widget } from '@lumino/widgets';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { Widget } from '@lumino/widgets';
 
 /**
  * Initialization data for the gennaker-tools extension.
@@ -15,39 +16,82 @@ export const broadcastFilePlugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [IDocumentManager],
   optional: [],
-  activate: (app: JupyterFrontEnd, docManager: IDocumentManager) => {
+  activate: async (app: JupyterFrontEnd, docManager: IDocumentManager) => {
     console.log(
       'JupyterLab plugin gennaker-tools:broadcast-file is activated!'
     );
     const { shell } = app;
 
-    const announce = (widget: Widget) => {
-      const context = docManager.contextForWidget(widget);
-      if (context === undefined) {
-        return;
+
+    const announce = (context: DocumentRegistry.Context) => {
+      const source = context.model.sharedModel.getSource();
+      const documentInfo = {
+        source,
+        path: context.localPath,
+        timestamp: Date.now()
       }
+
       // Step 1: announce via an event
       const event = new CustomEvent('broadcast-file', {
-        detail: context.localPath,
+        detail: documentInfo,
         bubbles: true
       });
       document.body.dispatchEvent(event);
 
       // Step 2: write to a global location
-      (window as any).currentDocumentPath = context.localPath;
+      (window as any).currentDocumentInfo = documentInfo;
     };
 
-    // Listen for changes
-    shell.currentChanged!.connect((_, change) => {
-      const { newValue } = change;
-      if (newValue === null) {
+
+    // Handle registration of event listeners
+    // We rely on the `this` binding feature of JavaScript 
+    // so that we do not need to keep around a registry of `slot` functions 
+    // for each context. Instead, we pass in "the same" `slot`, and the 
+    // individual (changing) context that we already have access to.
+    function slot(this: DocumentRegistry.Context) {
+      announce(this)
+    }
+
+    /**
+     * Listen for model updates, and broadcast the changes using announce()
+     */
+    const registerAndAnnounceChanges = async (widget: Widget) => {
+      const context = docManager.contextForWidget(widget);
+      if (context === undefined) {
         return;
       }
-      // Announce new tab
-      announce(newValue);
+      // Wait until we have source value
+      await context.ready;
+
+      // Announce initial state
+      announce(context);
+
+      // Listen for future changes
+      context.model.sharedModel.changed.connect(slot, context)
+    }
+
+    // Listen for changes
+    shell.currentChanged!.connect(async (_, change) => {
+      const { oldValue, newValue } = change;
+
+      // Add listeners and announce state
+      if (newValue !== null) {
+        await registerAndAnnounceChanges(newValue);
+      }
+
+      // Disconnect from previous listeners
+      if (oldValue != null) {
+        const oldContext = docManager.contextForWidget(oldValue);
+        if (oldContext === undefined) {
+          return;
+        }
+        oldContext.model.sharedModel.changed.disconnect(slot, oldContext);
+      }
     });
+
+    // Announce initial tab
     if (shell.currentWidget) {
-      announce(shell.currentWidget);
+      await registerAndAnnounceChanges(shell.currentWidget);
     }
   }
 };
