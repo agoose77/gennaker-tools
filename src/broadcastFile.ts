@@ -22,14 +22,13 @@ export const broadcastFilePlugin: JupyterFrontEndPlugin<void> = {
     );
     const { shell } = app;
 
-
     const announce = (context: DocumentRegistry.Context) => {
       const source = context.model.sharedModel.getSource();
       const documentInfo = {
         source,
         path: context.localPath,
         timestamp: Date.now()
-      }
+      };
 
       // Step 1: announce via an event
       const event = new CustomEvent('broadcast-file', {
@@ -42,14 +41,13 @@ export const broadcastFilePlugin: JupyterFrontEndPlugin<void> = {
       (window as any).currentDocumentInfo = documentInfo;
     };
 
-
     // Handle registration of event listeners
-    // We rely on the `this` binding feature of JavaScript 
-    // so that we do not need to keep around a registry of `slot` functions 
-    // for each context. Instead, we pass in "the same" `slot`, and the 
+    // We rely on the `this` binding feature of JavaScript
+    // so that we do not need to keep around a registry of `slot` functions
+    // for each context. Instead, we pass in "the same" `slot`, and the
     // individual (changing) context that we already have access to.
     function slot(this: DocumentRegistry.Context) {
-      announce(this)
+      announce(this);
     }
 
     /**
@@ -67,8 +65,8 @@ export const broadcastFilePlugin: JupyterFrontEndPlugin<void> = {
       announce(context);
 
       // Listen for future changes
-      context.model.sharedModel.changed.connect(slot, context)
-    }
+      context.model.sharedModel.changed.connect(slot, context);
+    };
 
     // Listen for changes
     shell.currentChanged!.connect(async (_, change) => {
@@ -80,7 +78,7 @@ export const broadcastFilePlugin: JupyterFrontEndPlugin<void> = {
       }
 
       // Disconnect from previous listeners
-      if (oldValue != null) {
+      if (oldValue !== null) {
         const oldContext = docManager.contextForWidget(oldValue);
         if (oldContext === undefined) {
           return;
